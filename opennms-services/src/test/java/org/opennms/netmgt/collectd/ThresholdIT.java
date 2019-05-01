@@ -75,6 +75,7 @@ import org.opennms.netmgt.mock.MockPersisterFactory;
 import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.events.EventBuilder;
 import org.opennms.netmgt.rrd.RrdRepository;
+import org.opennms.netmgt.threshd.ThresholdingService;
 import org.opennms.netmgt.xml.event.Event;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,7 @@ import com.google.common.collect.Lists;
         "classpath*:/META-INF/opennms/component-dao.xml",
         "classpath:/META-INF/opennms/applicationContext-pinger.xml",
         "classpath:/META-INF/opennms/applicationContext-daemon.xml",
+        "classpath:/META-INF/opennms/applicationContext-thresholding.xml",
         "classpath:/META-INF/opennms/mockEventIpcManager.xml",
         "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
         "classpath:/META-INF/opennms/applicationContext-rpc-collector.xml",
@@ -137,6 +139,9 @@ public class ThresholdIT implements TemporaryDatabaseAware<MockDatabase> {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
+    @Autowired
+    private ThresholdingService thresholdingService;
+
     @Test
     public void canTriggerThreshold() throws Exception {
         // Load our custom config
@@ -162,6 +167,7 @@ public class ThresholdIT implements TemporaryDatabaseAware<MockDatabase> {
         collectd.setNodeDao(nodeDao);
         collectd.setEventIpcManager(mockEventIpcManager);
         collectd.setPersisterFactory(persisterFactory);
+        collectd.setThresholdingService(thresholdingService);
         collectd.init();
         collectd.start();
 

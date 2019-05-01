@@ -19,8 +19,11 @@
     <context:annotation-config />
     <tx:annotation-driven/>
 
+    <bean name="thresholdingFactory" class="org.opennms.netmgt.threshd.ThresholdingFactoryImpl" />
+
     <bean id="daemon" class="org.opennms.netmgt.collectd.Collectd">
       <property name="eventIpcManager" ref="eventIpcManager"/>
+      <property name="thresholdingFactory" ref="thresholdingFactory"/>
     </bean>
 
     <bean id="collectionAgentFactory" class="org.opennms.netmgt.collectd.DefaultSnmpCollectionAgentFactory" />
