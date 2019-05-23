@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2011-2014 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2014 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -28,32 +28,25 @@
 
 package org.opennms.smoketest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
-/**
- * Verify that we can login to the web application
- * and render the about page.
- */
-public class AboutPageIT extends OpenNMSSeleniumIT {
+
+public class CategoriesBoxIT extends OpenNMSSeleniumIT {
 
     @Before
-    public void setUp() {
-        driver.get(getBaseUrlInternal() + "opennms/about/index.jsp");
+    public void before() {
+        frontPage();
     }
 
     @Test
-    public void hasAllPanels() throws Exception {
-        assertEquals(4, countElementsMatchingCss("div.card-header"));
-    }
-
-    @Test
-    public void hasContent() {
-        assertNotNull(driver.findElement(By.xpath("//span[text()='License and Copyright']")));
-        assertNotNull(driver.findElement(By.xpath("//th[text()='Version:']")));
+    public void testCategoryLink() throws Exception {
+        // Hit the default "Network Interfaces" link on the startpage
+        findElementByLink("Network Interfaces").click();
+        // check for correct url...
+        wait.until(ExpectedConditions.urlContains("/opennms/rtc/category.jsp"));
+        // ...and header cell
+        findElementByXpath("//th[text()='24hr Availability']");
     }
 }

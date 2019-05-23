@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2011-2014 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2014 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -29,31 +29,31 @@
 package org.opennms.smoketest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.openqa.selenium.By;
+import org.junit.runners.MethodSorters;
 
-/**
- * Verify that we can login to the web application
- * and render the about page.
- */
-public class AboutPageIT extends OpenNMSSeleniumIT {
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class AssetsPageIT extends OpenNMSSeleniumIT {
     @Before
-    public void setUp() {
-        driver.get(getBaseUrlInternal() + "opennms/about/index.jsp");
+    public void setUp() throws Exception {
+        driver.get(getBaseUrlInternal() + "opennms/asset/index.jsp");
     }
 
     @Test
-    public void hasAllPanels() throws Exception {
-        assertEquals(4, countElementsMatchingCss("div.card-header"));
-    }
+    public void testAllTextIsPresent() throws Exception {
+        assertEquals(3, countElementsMatchingCss("div.card-header"));
+        findElementByXpath("//span[text()='Search Asset Information']");
+        findElementByXpath("//span[text()='Assets with Asset Numbers']");
+        findElementByXpath("//span[text()='Assets Inventory']");
+    }    
 
     @Test
-    public void hasContent() {
-        assertNotNull(driver.findElement(By.xpath("//span[text()='License and Copyright']")));
-        assertNotNull(driver.findElement(By.xpath("//th[text()='Version:']")));
+    public void testAllLinks() throws InterruptedException {
+        findElementByLink("All nodes with asset info").click();
+        findElementByXpath("//span[text()='Assets']");
     }
+
 }

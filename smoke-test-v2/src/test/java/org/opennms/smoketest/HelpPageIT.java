@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2011-2018 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2018 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -35,25 +35,39 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-/**
- * Verify that we can login to the web application
- * and render the about page.
- */
-public class AboutPageIT extends OpenNMSSeleniumIT {
+public class HelpPageIT extends OpenNMSSeleniumIT {
 
     @Before
-    public void setUp() {
-        driver.get(getBaseUrlInternal() + "opennms/about/index.jsp");
+    public void setUp() throws Exception {
+        driver.get(getBaseUrlInternal() + "opennms/help/index.jsp");
     }
 
     @Test
-    public void hasAllPanels() throws Exception {
-        assertEquals(4, countElementsMatchingCss("div.card-header"));
-    }
-
-    @Test
-    public void hasContent() {
-        assertNotNull(driver.findElement(By.xpath("//span[text()='License and Copyright']")));
-        assertNotNull(driver.findElement(By.xpath("//th[text()='Version:']")));
+    public void verifyAllButtonsPresent() throws Exception {
+        final String[] links = new String[] {
+                // Online Links
+                "Installation Guide",
+                "Admin Guide",
+                "Developers Guide",
+                "OpenNMS Wiki",
+                "Welcome Guide",
+                // Offline Links
+                "Installation Guide",
+                "Admin Guide",
+                "Developers Guide",
+                "OpenNMS Wiki",
+                "Welcome Guide",
+                "Commercial Support",
+                "Web Chat",
+                "Mailing Lists",
+                "Questions & Answers",
+                "OpenNMS on GitHub",
+                "Issue Tracker",
+                "Continuous Integration"
+        };
+        assertEquals(links.length, countElementsMatchingCss("a.btn"));
+        for (final String text : links) {
+            assertNotNull("Link with text '" + text + "' must exist.", driver.findElement(By.linkText(text)));
+        }
     }
 }

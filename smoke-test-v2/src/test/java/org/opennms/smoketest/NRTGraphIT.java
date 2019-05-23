@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2016 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2016 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -28,32 +28,16 @@
 
 package org.opennms.smoketest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
-/**
- * Verify that we can login to the web application
- * and render the about page.
- */
-public class AboutPageIT extends OpenNMSSeleniumIT {
-
-    @Before
-    public void setUp() {
-        driver.get(getBaseUrlInternal() + "opennms/about/index.jsp");
-    }
-
+public class NRTGraphIT extends OpenNMSSeleniumIT {
     @Test
-    public void hasAllPanels() throws Exception {
-        assertEquals(4, countElementsMatchingCss("div.card-header"));
-    }
-
-    @Test
-    public void hasContent() {
-        assertNotNull(driver.findElement(By.xpath("//span[text()='License and Copyright']")));
-        assertNotNull(driver.findElement(By.xpath("//th[text()='Version:']")));
+    public void canLoadGraph() throws Exception {
+        // Request a known graph with an invalid resource id
+        driver.get(getBaseUrlInternal() + "opennms/graph/nrtg.jsp?resourceId=node[999].nodeSnmp[]&report=mib2.tcpopen");
+        // The graph should be rendered
+        findElementByXpath("//div[@class='flot-datatable-tabs']");
+        // It won't have any data, but this is sufficient to very that all of the required
+        // Javascript files have been loaded, and the AJAX call to get the graph was successful
     }
 }

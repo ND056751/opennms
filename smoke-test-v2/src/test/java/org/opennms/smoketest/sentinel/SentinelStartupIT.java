@@ -26,31 +26,39 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.smoketest.utils.org.opennms.smoketest.selenium;
+package org.opennms.smoketest.sentinel;
 
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
-import org.openqa.selenium.WebDriver;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
+import org.opennms.smoketest.containers.OpenNMSContainer;
+import org.opennms.smoketest.containers.SentinelContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opennms.smoketest.containers.PostgreSQLContainer;
 
-public class SeleniumMatchers {
+/**
+ * Verify that the Sentinel container starts up.
+ */
+public class SentinelStartupIT {
+    private final Logger LOG = LoggerFactory.getLogger(SentinelStartupIT.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(SeleniumMatchers.class);
+    private static final PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer();
 
-    public static int countElementsMatchingCss(final WebDriver driver, final String css) {
-        LOG.debug("countElementsMatchingCss: selector={}", css);
+    private static final OpenNMSContainer opennmsContainer = new OpenNMSContainer();
 
-        // Selenium has a bug where the findElements(By) doesn't return elements; even if I attempt to do it manually
-        // using JavascriptExecutor.execute(), so... parse the DOM on the Java side instead.  :/
-        final org.jsoup.nodes.Document doc = Jsoup.parse(driver.getPageSource());
-        final Elements matching = doc.select(css);
-        return matching.size();
+    private static final SentinelContainer sentinelContainer = new SentinelContainer();
 
-        // The original one-line implementation, for your edification.  Look at the majesty!
-        // A single tear rolls down your cheek as you imagine what could have been, if
-        // Selenium wasn't junk.
-        //return getDriver().findElements(By.cssSelector(css)).size();
+    @ClassRule
+    public static TestRule chain = RuleChain
+            .outerRule(postgreSQLContainer)
+            .around(opennmsContainer)
+            .around(sentinelContainer);
+
+    @Test
+    public void canStartSentinel() {
+        // Containers started and health check passed, we're all set
     }
 
 }

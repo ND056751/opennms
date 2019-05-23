@@ -35,8 +35,13 @@ import java.util.Base64;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.opennms.netmgt.xml.event.Event;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,6 +84,24 @@ public class OpenNMSRestClient {
             return actualObj.get("displayVersion").asText();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void sendEvent(Event event) {
+        sendEvent(event, true);
+    }
+
+    public void sendEvent(Event event, boolean clearDates) {
+        if (clearDates) {
+            // Clear dates to avoid problems with date marshaling/unmarshaling
+            event.setCreationTime(null);
+            event.setTime(null);
+        }
+        final WebTarget target = getTarget().path("events");
+        final Response response = getBuilder(target).post(Entity.entity(event, MediaType.APPLICATION_XML));
+        if (!Response.Status.Family.SUCCESSFUL.equals(response.getStatusInfo().getFamily())) {
+            throw new RuntimeException(String.format("Request failed with: %s:\n%s",
+                    response.getStatusInfo().getReasonPhrase(), response.hasEntity() ? response.readEntity(String.class) : ""));
         }
     }
 

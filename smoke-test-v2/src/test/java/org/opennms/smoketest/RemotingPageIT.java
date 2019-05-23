@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2019 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2019 The OpenNMS Group, Inc.
+ * Copyright (C) 2011-2014 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2014 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -28,32 +28,23 @@
 
 package org.opennms.smoketest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 /**
- * Verify that we can login to the web application
- * and render the about page.
+ * This test is used to make sure that the opennms-remoting webapp is properly
+ * initialized and that the JNLP files are installed properly.
  */
-public class AboutPageIT extends OpenNMSSeleniumIT {
-
+public class RemotingPageIT extends OpenNMSSeleniumIT {
     @Before
-    public void setUp() {
-        driver.get(getBaseUrlInternal() + "opennms/about/index.jsp");
+    public void setUp() throws Exception {
+        remotingPage();
     }
 
     @Test
-    public void hasAllPanels() throws Exception {
-        assertEquals(4, countElementsMatchingCss("div.card-header"));
-    }
-
-    @Test
-    public void hasContent() {
-        assertNotNull(driver.findElement(By.xpath("//span[text()='License and Copyright']")));
-        assertNotNull(driver.findElement(By.xpath("//th[text()='Version:']")));
+    public void testJnlpAndInstallerLinks() throws Exception {
+        findElementByXpath("//a[@href='webstart/app.jnlp']");
+        findElementByXpath("//a[@href='webstart/headless.jnlp']");
+        findElementByXpath("//p[text()='OpenNMS Remote Poller Installer']");
     }
 }
