@@ -99,6 +99,18 @@ public class OpenNMSContainer extends GenericContainer {
         }
     }
 
+    public OpenNMSRestClient getRestClient() {
+        try {
+            return new OpenNMSRestClient(new URL(getBaseUrlExternal() + "opennms"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getWebPort() {
+        return getMappedPort(OPENNMS_WEB_PORT);
+    }
+
     private static class WaitForOpenNMS extends org.testcontainers.containers.wait.strategy.AbstractWaitStrategy {
         private final OpenNMSContainer openNMSContainer;
 
@@ -109,12 +121,7 @@ public class OpenNMSContainer extends GenericContainer {
         @Override
         protected void waitUntilReady() {
             LOG.info("Waiting for OpenNMS...");
-            final OpenNMSRestClient nmsRestClient;
-            try {
-                nmsRestClient = new OpenNMSRestClient(new URL(openNMSContainer.getBaseUrlExternal() + "opennms"));
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
+            final OpenNMSRestClient nmsRestClient = openNMSContainer.getRestClient();
             await().atMost(5, MINUTES)
                     .pollInterval(5, SECONDS).pollDelay(0, SECONDS)
                     .ignoreExceptions()

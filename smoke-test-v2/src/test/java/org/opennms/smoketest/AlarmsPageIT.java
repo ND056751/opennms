@@ -44,17 +44,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AlarmsPageIT extends OpenNMSSeleniumIT {
     @Before
-    public void createAlarm() throws Exception {
+    public void createAlarm() {
         final EventBuilder builder = new EventBuilder(EventConstants.IMPORT_FAILED_UEI, "AlarmsPageTest");
         builder.setParam("importResource", "foo");
         final Event ev = builder.getEvent();
 
-        final OpenNMSRestClient restClient = new OpenNMSRestClient(opennmsContainer.getBaseUrlInternal());
+        final OpenNMSRestClient restClient = opennmsContainer.getRestClient();
         restClient.sendEvent(ev);
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         alarmsPage();
     }
 
@@ -74,7 +74,7 @@ public class AlarmsPageIT extends OpenNMSSeleniumIT {
     }
 
     @Test
-    public void testAllLinks() throws InterruptedException{
+    public void testAllLinks() {
         findElementByLink("All alarms (summary)").click();
         findElementByXpath("//a[@title='Show acknowledged alarm(s)']");
         assertElementDoesNotExist(By.cssSelector("//table//th//a[text()='First Event Time']"));
@@ -91,7 +91,7 @@ public class AlarmsPageIT extends OpenNMSSeleniumIT {
     }
 
     @Test
-    public void testAlarmLink() throws Exception {
+    public void testAlarmLink() {
         findElementByLink("All alarms (summary)").click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@href,'alarm/detail.htm')]")));
@@ -101,7 +101,7 @@ public class AlarmsPageIT extends OpenNMSSeleniumIT {
     }
 
     @Test
-    public void testAlarmIdNotFoundPage() throws InterruptedException {
+    public void testAlarmIdNotFoundPage() {
         driver.get(getBaseUrlInternal() + "opennms/alarm/detail.htm?id=999999999");
         findElementByXpath("//h1[text()='Alarm ID Not Found']");
     }
