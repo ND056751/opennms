@@ -532,12 +532,6 @@ if [ "%{skip_compile}" = 1 ]; then
 		OPTS_ENABLE_SNAPSHOTS="-Denable.snapshots=true"
 		OPTS_UPDATE_POLICY="-DupdatePolicy=always"
 	fi
-	TOPDIR=`pwd`
-	for dir in . opennms-tools; do
-		cd $dir
-			"$TOPDIR"/compile.pl -N $OPTS_SKIP_TESTS $OPTS_SETTINGS_XML $OPTS_ENABLE_SNAPSHOTS $OPTS_UPDATE_POLICY -Dinstall.version="%{version}-%{release}" -Ddist.name="%{name}-%{version}-%{release}.%{_arch}" -Dopennms.home="%{instprefix}" install
-		cd -
-	done
 else
 	echo "=== RUNNING COMPILE ==="
 	./compile.pl $OPTS_SKIP_TESTS $OPTS_SETTINGS_XML $OPTS_ENABLE_SNAPSHOTS $OPTS_UPDATE_POLICY -Dbuild=all -Dinstall.version="%{version}-%{release}" -Ddist.name="%{name}-%{version}-%{release}.%{_arch}" \
