@@ -58,15 +58,21 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
             // Record everything since the containers run at a class-level and not at an individual test level
             .withRecordingMode(BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL, new File("target"))
             .withNetwork(Network.SHARED)
+            // Increase the containers shared memory to 2GB to help prevent Firefox from crashing
+            .withSharedMemorySize(2147483648L)
             .withEnv("SCREEN_WIDTH", "2048")
             .withEnv("SCREEN_HEIGHT", "1080");
 
     private static FirefoxOptions getFirefoxOptions() {
         final FirefoxOptions options = new FirefoxOptions();
         options.setProfile(new FirefoxProfile());
+        // Disable browser notifications
         options.addPreference("dom.webnotifications.enabled", false);
+        // Increase the browser resolution on startup
         options.addArguments("--width=2048");
         options.addArguments("--height=1080");
+        // Debug Selenium <-> Firefox
+        //options.setLogLevel(FirefoxDriverLogLevel.TRACE);
         return options;
     }
 
