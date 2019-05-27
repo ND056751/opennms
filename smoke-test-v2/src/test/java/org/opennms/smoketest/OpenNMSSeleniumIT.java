@@ -39,6 +39,7 @@ import org.opennms.smoketest.containers.PostgreSQLContainer;
 import org.opennms.smoketest.selenium.AbstractOpenNMSSeleniumHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.Network;
@@ -53,14 +54,28 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
     public static final OpenNMSContainer opennmsContainer = new OpenNMSContainer();
 
     public static final BrowserWebDriverContainer firefox = (BrowserWebDriverContainer) new BrowserWebDriverContainer()
-            .withCapabilities(new FirefoxOptions())
+            .withCapabilities(getFirefoxOptions())
+            // Record everything since the containers run at a class-level and not at an individual test level
             .withRecordingMode(BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL, new File("target"))
-            .withNetwork(Network.SHARED);
+            .withNetwork(Network.SHARED)
+            .withEnv("SCREEN_WIDTH", "2048")
+            .withEnv("SCREEN_HEIGHT", "1080");
+
+    private static FirefoxOptions getFirefoxOptions() {
+        final FirefoxOptions options = new FirefoxOptions();
+        options.setProfile(new FirefoxProfile());
+        options.addPreference("dom.webnotifications.enabled", false);
+        options.addArguments("--width=2048");
+        options.addArguments("--height=1080");
+        return options;
+    }
 
     @ClassRule
     public static TestRule chain = RuleChain
             .outerRule(postgreSQLContainer)
             .around(opennmsContainer)
+            // Start the Selenium container *after* OpenNMS has started so that the recording doesn't start
+            // until OpenNMS is actually up and running
             .around(firefox);
 
     public static RemoteWebDriver driver;

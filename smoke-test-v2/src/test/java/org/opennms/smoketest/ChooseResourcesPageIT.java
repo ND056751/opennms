@@ -32,6 +32,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class ChooseResourcesPageIT extends OpenNMSSeleniumIT {
 
             // VERIFY
             findElementByLink("Resource Graphs").click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(), \"Graph All\")]")));
             findElementByXpath("//button[contains(text(), \"Graph All\")]").click();
             Assert.assertTrue("There should be graphs visible, but could not find any", !driver.findElements(By.xpath("//div[@id='graph-results']//div[@class='graph-container']")).isEmpty());
         } finally {

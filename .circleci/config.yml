@@ -284,6 +284,14 @@ jobs:
             find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/test-results/ \;
       - store_test_results:
           path: ~/test-results
+      - store_artifacts:
+          when: always
+          path: ~/project/smoke-test-v2/target/*.flv
+          destination: recordings
+      - store_artifacts:
+          when: always
+          path: ~/project/smoke-test-v2/target/screenshots
+          destination: screenshots
 
   publish-horizon-oci:
     executor: docker-executor

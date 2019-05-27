@@ -92,6 +92,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.logging.LogEntries;
@@ -134,9 +135,13 @@ public abstract class AbstractOpenNMSSeleniumHelper {
         @Override
         protected void starting(final Description description) {
             LOG.debug("Using driver: {}", getDriver());
-            setImplicitWait();
+            try {
+                setImplicitWait();
+            } catch (WebDriverException e) {
+                e.printStackTrace();
+            }
             getDriver().manage().window().setPosition(new Point(0,0));
-            //getDriver().manage().window().setSize(new Dimension(2048, 10000));
+            getDriver().manage().window().maximize();
             wait = new WebDriverWait(getDriver(), TimeUnit.SECONDS.convert(LOAD_TIMEOUT, TimeUnit.MILLISECONDS));
             requisitionWait = new WebDriverWait(getDriver(), TimeUnit.SECONDS.convert(REQ_TIMEOUT, TimeUnit.MILLISECONDS));
 
