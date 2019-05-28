@@ -58,7 +58,7 @@ public class RestInfoIT extends OpenNMSSeleniumIT {
     @Test
     public void canRetrieveProductInfo() throws ClientProtocolException, IOException, InterruptedException {
         // Retrieve the info summary
-        final ResponseData response = getRequest(new HttpGet(getBaseUrlInternal() + "/opennms/rest/info"));
+        final ResponseData response = getRequest(new HttpGet(getBaseUrlExternal() + "/opennms/rest/info"));
         final String json = response.getResponseText();
 
         // The expected payload looks like:

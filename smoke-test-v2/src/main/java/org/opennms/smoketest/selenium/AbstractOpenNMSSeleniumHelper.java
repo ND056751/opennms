@@ -46,6 +46,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -74,6 +75,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.junit.Rule;
@@ -101,6 +103,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.rnorth.ducttape.unreliables.Unreliables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -468,39 +471,48 @@ public abstract class AbstractOpenNMSSeleniumHelper {
     protected void clickMenuItem(final String menuItemText, final String submenuItemText, final String submenuItemHref) {
         LOG.debug("clickMenuItem: itemText={}, submenuItemText={}, submenuHref={}", menuItemText, submenuItemText, submenuItemHref);
 
-        final Actions action = new Actions(getDriver());
+        // Repeat the process altering the offset slightly everytime
+        final AtomicInteger offset = new AtomicInteger(10);
+        final WebDriverWait shortWait = new WebDriverWait(getDriver(), 1);
+        Unreliables.retryUntilSuccess(30, TimeUnit.SECONDS, () -> {
+            final Actions action = new Actions(getDriver());
 
-        final WebElement menuElement;
-        if (menuItemText.startsWith("name=")) {
-            final String menuItemName = menuItemText.replaceFirst("name=", "");
-            menuElement = findElementByName(menuItemName);
-        } else {
-            menuElement = findElementByXpath("//a[contains(text(), '" + menuItemText + "')]");
-        }
-        action.moveToElement(menuElement, 2, 2).perform();
-
-        final WebElement submenuElement;
-        if (submenuItemText != null) {
-            if (submenuItemHref == null) {
-                submenuElement = findElementByXpath("//a[contains(text(), '" + submenuItemText + "')]");
+            final WebElement menuElement;
+            if (menuItemText.startsWith("name=")) {
+                final String menuItemName = menuItemText.replaceFirst("name=", "");
+                menuElement = findElementByName(menuItemName);
             } else {
-                submenuElement = findElementByXpath("//a[contains(@href, '" + submenuItemHref + "') and contains(text(), '" + submenuItemText + "')]");
+                menuElement = findElementByXpath("//a[contains(text(), '" + menuItemText + "')]");
             }
-        } else {
-            submenuElement = null;
-        }
+            action.moveToElement(menuElement, offset.get(), offset.get()).perform();
+            if (offset.incrementAndGet() > 10) {
+                offset.set(0);
+            }
 
-        if (submenuElement == null) {
-            // no submenu given, just click the main element
-            // wait until the element is visible, not just present in the DOM
-            wait.until(ExpectedConditions.visibilityOf(menuElement));
-            menuElement.click();
-        } else {
-            // we want a submenu item, click it instead
-            // wait until the element is visible, not just present in the DOM
-            wait.until(ExpectedConditions.visibilityOf(submenuElement));
-            submenuElement.click();
-        }
+            final WebElement submenuElement;
+            if (submenuItemText != null) {
+                if (submenuItemHref == null) {
+                    submenuElement = findElementByXpath("//a[contains(text(), '" + submenuItemText + "')]");
+                } else {
+                    submenuElement = findElementByXpath("//a[contains(@href, '" + submenuItemHref + "') and contains(text(), '" + submenuItemText + "')]");
+                }
+            } else {
+                submenuElement = null;
+            }
+
+            if (submenuElement == null) {
+                // no submenu given, just click the main element
+                // wait until the element is visible, not just present in the DOM
+                shortWait.until(ExpectedConditions.visibilityOf(menuElement));
+                menuElement.click();
+            } else {
+                // we want a submenu item, click it instead
+                // wait until the element is visible, not just present in the DOM
+                shortWait.until(ExpectedConditions.visibilityOf(submenuElement));
+                submenuElement.click();
+            }
+            return null;
+        });
     }
 
     protected void frontPage() {

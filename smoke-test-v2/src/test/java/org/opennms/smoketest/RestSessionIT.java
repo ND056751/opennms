@@ -58,7 +58,7 @@ public class RestSessionIT extends OpenNMSSeleniumIT {
     private static final Logger LOG = LoggerFactory.getLogger(RestSessionIT.class);
 
     private Header[] queryUri(final String uri, final String header) throws IOException {
-        final HttpGet httpGet = new HttpGet(getBaseUrlInternal() + uri);
+        final HttpGet httpGet = new HttpGet(getBaseUrlExternal() + uri);
         final HttpHost targetHost = new HttpHost(httpGet.getURI().getHost(), httpGet.getURI().getPort(), httpGet.getURI().getScheme());
         final CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()), new UsernamePasswordCredentials("admin", "admin"));

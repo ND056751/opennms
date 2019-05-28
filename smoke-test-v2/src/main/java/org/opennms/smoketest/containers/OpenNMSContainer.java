@@ -80,7 +80,7 @@ public class OpenNMSContainer extends GenericContainer {
     /**
      * @return the URL in a form consumable by containers networked with this one using the alias and internal port
      */
-    public URL getBaseUrlInternal() {
+    public static URL getBaseUrlInternal() {
         try {
             return new URL(String.format("http://%s:%d/", ALIAS, OPENNMS_WEB_PORT));
         } catch (MalformedURLException e) {

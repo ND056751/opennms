@@ -36,6 +36,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
  @FixMethodOrder(MethodSorters.NAME_ASCENDING)
  public class MenuHeaderIT extends OpenNMSSeleniumIT {
+
      @Test
      public void testMenuEntries() throws Exception {
          clickMenuItem("Search", null, "element/index.jsp");

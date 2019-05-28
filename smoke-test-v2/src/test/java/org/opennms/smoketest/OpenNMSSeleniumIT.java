@@ -63,7 +63,7 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
             .withEnv("SCREEN_WIDTH", "2048")
             .withEnv("SCREEN_HEIGHT", "1080");
 
-    private static FirefoxOptions getFirefoxOptions() {
+    public static FirefoxOptions getFirefoxOptions() {
         final FirefoxOptions options = new FirefoxOptions();
         options.setProfile(new FirefoxProfile());
         // Disable browser notifications

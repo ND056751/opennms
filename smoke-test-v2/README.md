@@ -35,6 +35,30 @@ docker image load -i minion.oci
 docker image load -i sentinel.oci
 ```
 
+# Working with Selenium tests
+
+Selenium tests can get finicky and going through the setup and tear down for each test run can get time consuming.
+In order to speed up development time, you can setup the environment once by running the main() method in the `OpenNMSSeleniumDebugIT` class.
+This method uses the same bootstrap/setup code as the standard Selenium tests do.
+Once the environment is ready, you should see output similar to:
+```
+Web driver is available at: http://localhost:32811/wd/hub
+OpenNMS is available at: http://localhost:32808/
+```
+
+You can then update your class like so:
+```
+public class MenuHeaderIT extends OpenNMSSeleniumDebugIT {
+  public MenuHeaderIT() {
+    super("http://localhost:32811/wd/hub", "http://localhost:32808/");
+  }
+  ...
+
+```
+
+Running the test will now use the pre-built environment instead of creating a new one each time.
+Once your happy with the test, stop the `main()` method, update the class to extend `OpenNMSSeleniumIT` instead and run it again for validation.
+
 # Skipping teardown
 
 Set these environment variables for your test run:
