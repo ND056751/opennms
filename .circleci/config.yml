@@ -283,9 +283,9 @@ jobs:
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
             find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/test-results/ \;
             mkdir -p ~/test-artifacts/recordings
-            cp -R ~/project/smoke-test-v2/target/*.flv ~/test-artifacts/recordings
-            cp -R ~/project/smoke-test-v2/target/screenshots ~/test-artifacts/
-            cp -R ~/project/smoke-test-v2/target/logs ~/test-artifacts/
+            cp -R ~/project/smoke-test-v2/target/*.flv ~/test-artifacts/recordings || true
+            cp -R ~/project/smoke-test-v2/target/screenshots ~/test-artifacts/ || true
+            cp -R ~/project/smoke-test-v2/target/logs ~/test-artifacts/ || true
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
