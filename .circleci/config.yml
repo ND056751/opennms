@@ -133,10 +133,18 @@ jobs:
       - restore-maven-cache
       - restore-nodejs-cache
       - run:
-          name: Compile
+          name: Compile OpenNMS
           command: |
             mvn clean -DskipTests=true
             ./compile.pl -DskipTests=true -Dbuild.skip.tarball=true
+      - run:
+          name: Compile smoke tests
+          # Compile the smoke tests, but don't run them yet
+          # We want to make sure that they compile and also leverage the caching that is setup here
+          # so that the artifacts required to run the smoke tests are cached as well without the need
+          # to maintain another cache
+          command: |
+            cd smoke-test-v2 && mvn install -DskipTests=true -DskipITs=true
       - save-maven-cache
       - save-nodejs-cache
       - persist_to_workspace:

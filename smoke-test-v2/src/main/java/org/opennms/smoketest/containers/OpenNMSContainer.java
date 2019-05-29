@@ -74,6 +74,7 @@ public class OpenNMSContainer extends GenericContainer {
                 .withEnv("OPENNMS_DBUSER", "opennms")
                 .withEnv("OPENNMS_DBPASS", "opennms")
                 .withEnv("KARAF_FEATURES", "producer")
+                .withEnv("JAVA_OPTS", "-Djava.security.egd=file:/dev/./urandom")
                 .withClasspathResourceMapping("opennms-overlay", "/opt/opennms-overlay", BindMode.READ_ONLY, SelinuxContext.SINGLE)
                 .withNetwork(Network.SHARED)
                 .withNetworkAliases(ALIAS)
@@ -156,10 +157,14 @@ public class OpenNMSContainer extends GenericContainer {
             throw new RuntimeException("Failed to create " + targetLogFolder, e);
         }
         for (String logFile : logFiles) {
-            // This will throw an exception if the source file is not found, which is OK
-            // since we expect the given logs files to exist
-            container.copyFileFromContainer(sourceLogFolder.resolve(logFile).toString(),
-                    targetLogFolder.resolve(logFile).toString());
+            try {
+                container.copyFileFromContainer(sourceLogFolder.resolve(logFile).toString(),
+                        targetLogFolder.resolve(logFile).toString());
+            } catch (Exception e) {
+                // Some log files may not exist, just log a message if copying any of these fails
+                LOG.info("Failed to copy log file {} from container: {}", logFile, e.getMessage());
+            }
+
         }
     }
 }
