@@ -290,6 +290,7 @@ jobs:
           path: ~/test-results
       - store_artifacts:
           when: always
+          path: ~/test-artifacts
           destination: test-artifacts
 
   publish-horizon-oci:
