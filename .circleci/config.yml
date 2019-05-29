@@ -276,22 +276,21 @@ jobs:
           command: |
             .circleci/scripts/smoke.sh
       - run:
-          name: Gather test results
+          name: Gather test artifacts
           when: always
           command: |
             mkdir -p ~/test-results
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
             find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/test-results/ \;
+            mkdir -p ~/test-artifacts/recordings
+            cp -R ~/project/smoke-test-v2/target/*.flv ~/test-artifacts/recordings
+            cp -R ~/project/smoke-test-v2/target/screenshots ~/test-artifacts/
+            cp -R ~/project/smoke-test-v2/target/logs ~/test-artifacts/
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           when: always
-          path: ~/project/smoke-test-v2/target/*.flv
-          destination: recordings
-      - store_artifacts:
-          when: always
-          path: ~/project/smoke-test-v2/target/screenshots
-          destination: screenshots
+          destination: test-artifacts
 
   publish-horizon-oci:
     executor: docker-executor
