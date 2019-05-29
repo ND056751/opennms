@@ -86,9 +86,10 @@ public class JmxConfigurationGeneratorIT extends OpenNMSSeleniumIT {
     public void verifyCompMemberSelection() throws Exception {
         configureJMXConnection(false);
 
-        selectNodeByName("Code Cache", true);
+        selectNodeByName("Compressed Class Space", true);
 
         // go to last page
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("next")));
         findElementById("next").click();
         wait.until(pageContainsText("collectd-configuration.xml"));
 
@@ -158,7 +159,7 @@ public class JmxConfigurationGeneratorIT extends OpenNMSSeleniumIT {
                                 return false;
                             }
                         } catch (final NoSuchElementException | StaleElementReferenceException e) {
-                            LOG.warn("Exception while checking for errors message.", e);
+                            // ignore
                         }
 
                         try {
@@ -166,7 +167,7 @@ public class JmxConfigurationGeneratorIT extends OpenNMSSeleniumIT {
                             LOG.debug("Page contains '{}'? {}", MBEANS_VIEW_TREE_WAIT_NAME, contains);
                             return contains;
                         } catch (final Exception e) {
-                            LOG.warn("Exception while checking for next page.", e);
+                            LOG.info("Exception while checking for next page: {}", e.getMessage());
                         }
 
                         return false;

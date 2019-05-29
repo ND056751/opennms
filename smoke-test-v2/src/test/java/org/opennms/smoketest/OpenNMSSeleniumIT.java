@@ -61,7 +61,7 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
             // Increase the containers shared memory to 2GB to help prevent Firefox from crashing
             .withSharedMemorySize(2147483648L)
             .withEnv("SCREEN_WIDTH", "2048")
-            .withEnv("SCREEN_HEIGHT", "1080");
+            .withEnv("SCREEN_HEIGHT", "1400");
 
     public static FirefoxOptions getFirefoxOptions() {
         final FirefoxOptions options = new FirefoxOptions();
@@ -70,7 +70,7 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
         options.addPreference("dom.webnotifications.enabled", false);
         // Increase the browser resolution on startup
         options.addArguments("--width=2048");
-        options.addArguments("--height=1080");
+        options.addArguments("--height=1400");
         // Debug Selenium <-> Firefox
         //options.setLogLevel(FirefoxDriverLogLevel.TRACE);
         return options;

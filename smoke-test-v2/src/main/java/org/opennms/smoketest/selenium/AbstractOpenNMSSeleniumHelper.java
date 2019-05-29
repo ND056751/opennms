@@ -192,24 +192,6 @@ public abstract class AbstractOpenNMSSeleniumHelper {
                 LOG.debug("Failed to dump DOM: {}", eDOM.getMessage(), eDOM);
             }
             LOG.debug("Current URL: {}", getDriver().getCurrentUrl());
-            getDriver().navigate().back();
-            LOG.debug("Previous URL: {}", getDriver().getCurrentUrl());
-            LogEntries logs = getDriver().manage().logs().get("browser");
-            for (final LogEntry entry : logs.getAll()) {
-                final int level = entry.getLevel().intValue();
-                final String msg = "BROWSER: " + entry.getMessage();
-                if (level > Level.SEVERE.intValue()) {
-                    LOG.error(msg);
-                } else if (level >= Level.WARNING.intValue()) {
-                    LOG.warn(msg);
-                } else if (level >= Level.INFO.intValue()) {
-                    LOG.info(msg);
-                } else if (level >= Level.FINE.intValue()) {
-                    LOG.debug(msg);
-                } else {
-                    LOG.trace(msg);
-                }
-            }
         }
 
         @Override
