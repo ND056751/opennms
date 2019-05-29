@@ -19,15 +19,16 @@ docker tag opennms/minion:24.0.0-rc minion
 docker tag opennms/sentinel:24.0.0-rc sentinel
 ```
 
-## Pull images from artifacts
+## Pull images from build artifacts
 
 ```
-wget https://2578-9377198-gh.circle-artifacts.com/0/minion.oci
-wget https://2579-9377198-gh.circle-artifacts.com/0/horizon.oci
-wget https://2580-9377198-gh.circle-artifacts.com/0/sentinel.oci
+export ARTIFACT_URL="https://2866-9377198-gh.circle-artifacts.com/0"
+wget $ARTIFACT_URL/horizon.oci
+wget $ARTIFACT_URL/minion.oci
+wget $ARTIFACT_URL/sentinel.oci
 ```
 
-> See the CricleCI build for the actual artifact URLs
+> Login to CircleCI and locate the build for the actual artifact URLs
 
 ```
 docker image load -i horizon.oci

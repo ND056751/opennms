@@ -418,7 +418,7 @@ public class ClassificationRulePageIT extends OpenNMSSeleniumIT {
 
         public Page open() {
             driver.get(url);
-            new WebDriverWait(driver, 5).until((driver) -> getTabs().size() == expectedTabs.size());
+            new WebDriverWait(driver, 15).until((driver) -> getTabs().size() == expectedTabs.size());
             return this;
         }
 
