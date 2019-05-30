@@ -1,11 +1,6 @@
 package org.opennms.smoketest;
 
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.junit.After;
+import com.google.common.collect.Collections2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +17,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Collections2;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Verifies that the Vaadin JMX Configuration Generator Application is deployed correctly.
@@ -38,11 +36,6 @@ public class JmxConfigurationGeneratorIT extends OpenNMSSeleniumIT {
         // give the Vaadin webapp time to settle down
         Thread.sleep(2000);
         selectVaadinFrame();
-    }
-
-    @After
-    public void after() {
-        selectDefaultFrame();
     }
 
     @Test

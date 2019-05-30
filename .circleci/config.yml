@@ -104,9 +104,10 @@ workflows:
       - build-sentinel-oci:
           requires:
             - package
-      - integration-test:
-          requires:
-            - build
+      # TODO: Reenable when done testing
+      #- integration-test:
+      #    requires:
+      #      - build
       - smoke-test:
           requires:
             - build-horizon-oci
