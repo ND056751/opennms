@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -57,6 +58,7 @@ import org.testcontainers.containers.SelinuxContext;
 
 public class OpenNMSContainer extends GenericContainer {
     public static final String DB_ALIAS = "db";
+
     private static final Logger LOG = LoggerFactory.getLogger(OpenNMSContainer.class);
     private static final int OPENNMS_WEB_PORT = 8980;
     private static final int OPENNMS_SSH_PORT = 8101;
@@ -110,6 +112,10 @@ public class OpenNMSContainer extends GenericContainer {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public InetSocketAddress getSshAddress() {
+        return InetSocketAddress.createUnresolved(getContainerIpAddress(), getMappedPort(OPENNMS_SSH_PORT));
     }
 
     public int getWebPort() {
