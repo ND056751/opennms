@@ -34,7 +34,7 @@
         <constructor-arg ref="pollContext" />
     </bean>
 
-    <bean name="thresholdingFactory" class="org.opennms.netmgt.threshd.ThresholdingFactoryImpl" />
+    <bean name="thresholdingService" class="org.opennms.netmgt.threshd.ThresholdingServiceImpl" />
     <bean name="ifLabelDao" class="org.opennms.netmgt.dao.hibernate.IfLabelDaoImpl"/>
 
     <bean name="daemon" class="org.opennms.netmgt.poller.Poller">
