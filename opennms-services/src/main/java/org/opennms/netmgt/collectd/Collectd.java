@@ -229,15 +229,6 @@ public class Collectd extends AbstractServiceDaemon implements
 
         installMessageSelectors();
 
-        // since thresholding is triggered from collectd now, make sure it is initialized properly now
-        // see: https://issues.opennms.org/browse/NMS-9064
-        // FIXME - Remove this dependency
-        try {
-            ThreshdConfigFactory.init();
-            ThresholdingConfigFactory.init();
-        } catch (final Exception e) {
-            throw new RuntimeException("Unable to initialize thresholding.", e);
-        }
     }
 
     private void installMessageSelectors() {

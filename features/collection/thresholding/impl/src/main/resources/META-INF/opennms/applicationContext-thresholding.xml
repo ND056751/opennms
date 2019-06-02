@@ -17,7 +17,7 @@
 	<bean name="thresholdingSetPersister" class="org.opennms.netmgt.threshd.DefaultThresholdingSetPersister" />
 
 	<bean name="thresholdingEventProxy" class="org.opennms.netmgt.threshd.ThresholdingEventProxyImpl">
-		<property name="eventMgr" ref="eventIpcManager"/>
+		<property name="eventMgr" ref="eventProxy"/>
     </bean>
 
     <bean id="thresholdingService" class="org.opennms.netmgt.threshd.ThresholdingServiceImpl">

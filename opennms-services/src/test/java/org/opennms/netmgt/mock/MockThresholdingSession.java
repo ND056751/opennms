@@ -28,24 +28,35 @@
 
 package org.opennms.netmgt.mock;
 
-import org.opennms.netmgt.collection.api.ServiceParameters;
+import org.opennms.netmgt.collection.api.CollectionSet;
 import org.opennms.netmgt.dao.api.ResourceStorageDao;
 import org.opennms.netmgt.rrd.RrdRepository;
-import org.opennms.netmgt.threshd.ThresholdingService;
 import org.opennms.netmgt.threshd.ThresholdingSession;
+import org.opennms.netmgt.threshd.ThresholdingSessionKey;
 
-public class MockThresholdingService implements ThresholdingService {
+public class MockThresholdingSession implements ThresholdingSession {
 
     @Override
-    public ThresholdingSession createSession(int m_nodeId, String hostAddress, String serviceName, RrdRepository m_repository, ServiceParameters m_params,
-            ResourceStorageDao m_resourceStorageDao) {
-        return new MockThresholdingSession();
+    public void close() throws Exception {
     }
 
     @Override
-    public ThresholdingSession getLatencyThresholdingSession(int m_nodeId, String hostAddress, String serviceName, RrdRepository m_repository, ServiceParameters m_params,
-            ResourceStorageDao m_resourceStorageDao) {
-        return new MockThresholdingSession();
+    public void accept(CollectionSet collectionSet) {
+    }
+
+    @Override
+    public ThresholdingSessionKey getKey() {
+        return null;
+    }
+
+    @Override
+    public ResourceStorageDao getResourceDao() {
+        return null;
+    }
+
+    @Override
+    public RrdRepository getRrdRepository() {
+        return null;
     }
 
 }

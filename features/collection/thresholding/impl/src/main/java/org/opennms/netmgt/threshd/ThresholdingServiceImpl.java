@@ -30,9 +30,12 @@ package org.opennms.netmgt.threshd;
 
 import java.util.HashMap;
 
+import javax.annotation.PostConstruct;
+
 import org.opennms.core.utils.InsufficientInformationException;
 import org.opennms.netmgt.collection.api.ServiceParameters;
 import org.opennms.netmgt.config.ThreshdConfigFactory;
+import org.opennms.netmgt.config.ThresholdingConfigFactory;
 import org.opennms.netmgt.dao.api.ResourceStorageDao;
 import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.events.api.annotations.EventHandler;
@@ -139,5 +142,15 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     // Send?
     // thresholds configuration change
     // ueiList.add(EventConstants.THRESHOLDCONFIG_CHANGED_EVENT_UEI);
+
+    @PostConstruct
+    private void init() {
+        try {
+            ThreshdConfigFactory.init();
+            ThresholdingConfigFactory.init();
+        } catch (final Exception e) {
+            throw new RuntimeException("Unable to initialize thresholding.", e);
+        }
+    }
 
 }
