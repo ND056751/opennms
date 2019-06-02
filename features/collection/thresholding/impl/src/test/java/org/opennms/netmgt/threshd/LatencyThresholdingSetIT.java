@@ -296,7 +296,7 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
 
         LatencyThresholdingSetImpl thresholdingSet = new LatencyThresholdingSetImpl(1, ipAddress, "HTTP", null, getRepository(), m_resourceStorageDao, m_eventProxy);
         assertTrue(thresholdingSet.hasThresholds()); // Global Test
-        LatencyCollectionResource resource = new LatencyCollectionResource("HTTP", ipAddress, null, IfLabel.NO_IFLABEL, Collections.emptyMap());
+        LatencyCollectionResource resource = new LatencyCollectionResource("http", ipAddress, null, IfLabel.NO_IFLABEL, Collections.emptyMap());
         LatencyCollectionAttributeType type = new LatencyCollectionAttributeType();
         CollectionAttribute collectionAttribute = new LatencyCollectionAttribute(resource, type, "http", 200.0);
         resource.addAttribute(collectionAttribute);
