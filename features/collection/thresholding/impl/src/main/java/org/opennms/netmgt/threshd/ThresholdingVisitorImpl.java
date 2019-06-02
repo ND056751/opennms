@@ -147,7 +147,7 @@ public class ThresholdingVisitorImpl extends AbstractCollectionSetVisitor implem
      * @return a {@link java.util.List} object.
      */
     List<ThresholdGroup> getThresholdGroups() {
-        return Collections.unmodifiableList(((ThresholdingVisitorImpl) m_thresholdingSet).getThresholdGroups());
+        return Collections.unmodifiableList(((ThresholdingSetImpl) m_thresholdingSet).getThresholdGroups());
     }
     
     /**

@@ -592,4 +592,8 @@ public class ThresholdingSetImpl implements ThresholdingSet {
         }
         return false;
     }
+
+    public List<ThresholdGroup> getThresholdGroups() {
+        return m_thresholdGroups;
+    }
 }
