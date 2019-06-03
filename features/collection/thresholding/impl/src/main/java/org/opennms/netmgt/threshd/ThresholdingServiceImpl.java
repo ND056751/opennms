@@ -28,8 +28,6 @@
 
 package org.opennms.netmgt.threshd;
 
-import java.util.HashMap;
-
 import javax.annotation.PostConstruct;
 
 import org.opennms.core.utils.InsufficientInformationException;
@@ -111,7 +109,7 @@ public class ThresholdingServiceImpl implements ThresholdingService {
 
     public ThresholdingVisitorImpl getThresholdingVistor(ThresholdingSession session) {
         ThresholdingSet thresholdingSet = thresholdingSetPersister.getThresholdingSet(session, eventProxy);
-        return new ThresholdingVisitorImpl(thresholdingSet, session.getResourceDao(), eventProxy);
+        return new ThresholdingVisitorImpl(thresholdingSet, ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
     }
 
     public ThresholdingEventProxy getEventProxy() {

@@ -29,8 +29,6 @@
 package org.opennms.netmgt.threshd;
 
 import org.opennms.netmgt.collection.api.CollectionSet;
-import org.opennms.netmgt.dao.api.ResourceStorageDao;
-import org.opennms.netmgt.rrd.RrdRepository;
 import org.opennms.netmgt.xml.event.Event;
 
 public interface ThresholdingSession extends AutoCloseable {
@@ -43,9 +41,4 @@ public interface ThresholdingSession extends AutoCloseable {
      */
     void accept(CollectionSet collectionSet);
 
-    ThresholdingSessionKey getKey();
-
-    ResourceStorageDao getResourceDao();
-
-    RrdRepository getRrdRepository();
 }

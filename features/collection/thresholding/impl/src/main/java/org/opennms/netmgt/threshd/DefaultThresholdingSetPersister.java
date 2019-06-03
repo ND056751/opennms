@@ -42,19 +42,20 @@ public class DefaultThresholdingSetPersister implements ThresholdingSetPersister
 
     @Override
     public void persistSet(ThresholdingSession session, ThresholdingSet set) {
-        thresholdingSets.put(((ThresholdingSession) session).getKey(), set);
+        thresholdingSets.put(((ThresholdingSessionImpl) session).getKey(), set);
 
     }
 
     @Override
     public ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy) {
-        ThresholdingSessionKey key = session.getKey();
+        ThresholdingSessionKey key = ((ThresholdingSessionImpl) session).getKey();
 
         ThresholdingSet tSet = thresholdingSets.get(key);
         if (tSet == null) {
             // FIXME - null parameters
             try {
-                tSet = new ThresholdingSetImpl(key.getNodeId(), key.getLocation(), key.getServiceName(), session.getRrdRepository(), session.getResourceDao(), eventProxy);
+                tSet = new ThresholdingSetImpl(key.getNodeId(), key.getLocation(), key.getServiceName(), ((ThresholdingSessionImpl) session).getRrdRepository(),
+                                               ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
                 thresholdingSets.put(key, tSet);
             } catch (ThresholdInitializationException e) {
                 // FIXME - remove this try/catch

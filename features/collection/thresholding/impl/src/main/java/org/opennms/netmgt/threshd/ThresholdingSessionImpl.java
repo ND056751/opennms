@@ -67,12 +67,10 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
         return sessionKey;
     }
 
-    @Override
     public ResourceStorageDao getResourceDao() {
         return resourceStorageDao;
     }
 
-    @Override
     public RrdRepository getRrdRepository() {
         return rrdRepository;
     }

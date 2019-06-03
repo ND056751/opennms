@@ -58,10 +58,5 @@ public interface ThresholdingService {
     ThresholdingSession createSession(int m_nodeId, String hostAddress, String serviceName, RrdRepository rrdRepository, ServiceParameters serviceParameters,
             ResourceStorageDao resourceStorageDao) throws ThresholdInitializationException;
 
-    // TODO - revert params to what Latency previously used.
-    // was (String location, int nodeId, String ifFace, String serviceName)
-    ThresholdingSession getLatencyThresholdingSession(int nodeId, String hostAddress, String serviceName, RrdRepository rrdRepository, ServiceParameters serviceParameters,
-            ResourceStorageDao resourceStorageDao) throws ThresholdInitializationException;
-
-
+    // TODO Service should get own refr of ResourceStorageDao - wire this.
 }
