@@ -60,6 +60,9 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     @Autowired
     private ThresholdingSetPersister thresholdingSetPersister;
 
+    @Autowired
+    private ResourceStorageDao resourceStorageDao;
+
     @EventHandler(uei = EventConstants.NODE_GAINED_SERVICE_EVENT_UEI)
     public void nodeGainedService(Event event) throws InsufficientInformationException {
         LOG.debug(event.toString());
@@ -98,8 +101,8 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     }
 
     @Override
-    public ThresholdingSession createSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters serviceParams,
-            ResourceStorageDao resourceStorageDao) throws ThresholdInitializationException {
+    public ThresholdingSession createSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters serviceParams)
+            throws ThresholdInitializationException {
         ThresholdingSessionKeyImpl sessionKey = new ThresholdingSessionKeyImpl(nodeId, hostAddress, serviceName, serviceName, serviceName);
         ThresholdingSet thresholdingSet = new CollectorThresholdingSet(nodeId, hostAddress, serviceName, repository, serviceParams, resourceStorageDao, eventProxy);
         ThresholdingSession session = new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);

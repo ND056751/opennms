@@ -137,8 +137,6 @@ class CollectableService implements ReadyRunnable {
 
     private final PersisterFactory m_persisterFactory;
 
-    private final ResourceStorageDao m_resourceStorageDao;
-
     private ThresholdingSession m_thresholdingSession;
 
     /**
@@ -154,7 +152,7 @@ class CollectableService implements ReadyRunnable {
      */
     protected CollectableService(OnmsIpInterface iface, IpInterfaceDao ifaceDao, CollectionSpecification spec,
             Scheduler scheduler, SchedulingCompletedFlag schedulingCompletedFlag, PlatformTransactionManager transMgr,
-            PersisterFactory persisterFactory, ThresholdingService thresholdingService, ResourceStorageDao resourceStorageDao) throws CollectionInitializationException {
+            PersisterFactory persisterFactory, ThresholdingService thresholdingService) throws CollectionInitializationException {
 
         m_agent = DefaultSnmpCollectionAgent.create(iface.getId(), ifaceDao, transMgr);
         m_spec = spec;
@@ -163,7 +161,6 @@ class CollectableService implements ReadyRunnable {
         m_ifaceDao = ifaceDao;
         m_transMgr = transMgr;
         m_persisterFactory = persisterFactory;
-        m_resourceStorageDao = resourceStorageDao;
 
         m_nodeId = iface.getNode().getId().intValue();
         m_status = CollectionStatus.SUCCEEDED;
@@ -178,7 +175,7 @@ class CollectableService implements ReadyRunnable {
         m_repository=m_spec.getRrdRepository(m_params.getCollectionName());
 
         try {
-            m_thresholdingSession = thresholdingService.createSession(m_nodeId, getHostAddress(), m_spec.getServiceName(), m_repository, m_params, m_resourceStorageDao);
+            m_thresholdingSession = thresholdingService.createSession(m_nodeId, getHostAddress(), m_spec.getServiceName(), m_repository, m_params);
         } catch (ThresholdInitializationException e) {
             LOG.error("Error when initializing Thresholding. No Thresholding will be performed on this service.", e);
         }

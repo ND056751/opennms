@@ -50,13 +50,11 @@ public interface ThresholdingService {
      * @param serviceName
      * @param m_repository
      * @param m_params
-     * @param m_resourceStorageDao
      * @return
      * @throws ThresholdInitializationException
      *             if there is an error initializing Thresholding.
      */
-    ThresholdingSession createSession(int m_nodeId, String hostAddress, String serviceName, RrdRepository rrdRepository, ServiceParameters serviceParameters,
-            ResourceStorageDao resourceStorageDao) throws ThresholdInitializationException;
+    ThresholdingSession createSession(int m_nodeId, String hostAddress, String serviceName, RrdRepository rrdRepository, ServiceParameters serviceParameters)
+            throws ThresholdInitializationException;
 
-    // TODO Service should get own refr of ResourceStorageDao - wire this.
 }

@@ -104,7 +104,7 @@ public class ThresholdingSessionIT implements TemporaryDatabaseAware<MockDatabas
     @Test
     public void canLoadServiceContext() throws ThresholdInitializationException {
         ServiceParameters serviceParams = new ServiceParameters(new HashMap<>());
-        ThresholdingSession visitor = service.createSession(nodeId, location, ifFace, null, serviceParams, null);
+        ThresholdingSession visitor = service.createSession(nodeId, location, ifFace, null, serviceParams);
         assertNotNull("Failed  to instantiate ThresholdingVisitor", visitor);
     }
 

@@ -306,7 +306,7 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
         addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 200.0, IfLabel.NO_IFLABEL, "127.0.0.1[HTTP]", "http", IfLabel.NO_IFLABEL, null,
                  m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
 
-        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams, m_resourceStorageDao);
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams);
         for (int i = 0; i < 5; i++) {
             session.accept(collectionSet);
         }
@@ -341,7 +341,7 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
                  m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
 
         ServiceParameters serviceParams = new ServiceParameters(Collections.emptyMap());
-        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, "StrafePing", getRepository(), serviceParams, m_resourceStorageDao);
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, "StrafePing", getRepository(), serviceParams);
         CollectionSet collectionSet = getCollectionSet(1, m_ipAddress, "StrafePing", m_location, getRepository(), attributes);
         session.accept(collectionSet);
 
@@ -365,7 +365,7 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
         EasyMock.expect(m_ifLabelDao.getInterfaceInfoFromIfLabel(EasyMock.anyInt(), EasyMock.anyString())).andReturn(mockIfInfo).anyTimes();
         EasyMock.replay(m_ifLabelDao);
 
-        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams, m_resourceStorageDao);
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams);
 
         Map<String, Double> attributes = new HashMap<String, Double>();
         attributes.put("http", 90.0);
@@ -414,7 +414,7 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
         EasyMock.expect(m_ifLabelDao.getInterfaceInfoFromIfLabel(EasyMock.anyInt(), EasyMock.anyString())).andReturn(mockIfInfo).anyTimes();
         EasyMock.replay(m_ifLabelDao);
 
-        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams, m_resourceStorageDao);
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams);
 
         Map<String, Double> attributes = new HashMap<String, Double>();
         attributes.put("http", 90.0);

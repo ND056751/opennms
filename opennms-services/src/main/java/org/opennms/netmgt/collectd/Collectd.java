@@ -59,8 +59,6 @@ import org.opennms.netmgt.config.CollectdConfigFactory;
 import org.opennms.netmgt.config.DataCollectionConfigFactory;
 import org.opennms.netmgt.config.SnmpEventInfo;
 import org.opennms.netmgt.config.SnmpPeerFactory;
-import org.opennms.netmgt.config.ThreshdConfigFactory;
-import org.opennms.netmgt.config.ThresholdingConfigFactory;
 import org.opennms.netmgt.config.collectd.CollectdConfiguration;
 import org.opennms.netmgt.config.collectd.Collector;
 import org.opennms.netmgt.config.collectd.Package;
@@ -193,9 +191,6 @@ public class Collectd extends AbstractServiceDaemon implements
 
     @Autowired
     private ThresholdingService m_thresholdingService;
-
-    @Autowired
-    private ResourceStorageDao m_resourceStorageDao;
 
     /**
      * Constructor.
@@ -532,8 +527,7 @@ public class Collectd extends AbstractServiceDaemon implements
                     m_schedulingCompletedFlag,
                     m_transTemplate.getTransactionManager(),
                     m_persisterFactory,
-                    m_thresholdingService,
-                    m_resourceStorageDao
+                    m_thresholdingService
                 );
 
                 // Add new collectable service to the collectable service list.

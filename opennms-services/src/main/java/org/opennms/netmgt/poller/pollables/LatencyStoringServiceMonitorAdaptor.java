@@ -82,8 +82,6 @@ public class LatencyStoringServiceMonitorAdaptor implements ServiceMonitorAdapto
 
     private final IfLabel m_ifLabelDao;
 
-    private ResourceStorageDao m_resourceStorageDao;
-
     public LatencyStoringServiceMonitorAdaptor(PollerConfig config, Package pkg, PersisterFactory persisterFactory, ThresholdingService thresholdingService, IfLabel ifLabelDao) {
         m_pollerConfig = config;
         m_pkg = pkg;
@@ -151,7 +149,7 @@ public class LatencyStoringServiceMonitorAdaptor implements ServiceMonitorAdapto
                                                                             service.getIpAddr(),
                                                                             service.getSvcName(),
                                                                          null,
-                                                                         null, null);
+                                                                         null);
             }
             m_thresholdingSession.accept(collectionSet);
         } catch (Throwable e) {
