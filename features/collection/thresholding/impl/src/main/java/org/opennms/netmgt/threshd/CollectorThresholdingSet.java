@@ -122,19 +122,6 @@ public class CollectorThresholdingSet extends ThresholdingSetImpl {
         return applyThresholds(resourceWrapper, attributesMap);
     }
 
-    /*
-     * Check Valid Interface Resource based on suggestions from Bug 2711
-     */
-    /** {@inheritDoc} */
-    @Override
-    protected boolean passedThresholdFilters(CollectionResourceWrapper resource, ThresholdEntity thresholdEntity) {
-        if (resource.isAnInterfaceResource() && !resource.isValidInterfaceResource()) {
-            LOG.info("passedThresholdFilters: Could not get data interface information for '{}' or this interface has an invalid ifIndex.  Not evaluating threshold.", resource.getIfLabel());
-            return false;
-        }
-        return super.passedThresholdFilters(resource, thresholdEntity);
-    }
-    
     protected boolean isCollectionEnabled(CollectionResource resource) {
         return resource.shouldPersist(svcParams);
     }

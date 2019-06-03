@@ -36,7 +36,25 @@ package org.opennms.netmgt.threshd;
  */
 public interface ThresholdingSetPersister {
 
+    /**
+     * Persists a {@link ThresholdingSet} for the Session.
+     * 
+     * @param session
+     * @param set
+     */
     void persistSet(ThresholdingSession session, ThresholdingSet set);
 
+    /**
+     * Get or Create a {@link ThresholdingSet} for the Session
+     * 
+     * @param session
+     * @param eventProxy
+     * @return
+     */
     ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy);
+
+    /**
+     * Invalidate all existing {@link ThresholdingSet}s.
+     */
+    void clear();
 }

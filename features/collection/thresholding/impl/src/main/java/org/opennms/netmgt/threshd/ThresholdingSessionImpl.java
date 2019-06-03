@@ -55,17 +55,12 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
 
     @Override
     public void accept(CollectionSet collectionSet) {
-        // TODO Auto-generated method stub
-
-        // Latency
-        acceptLatencyCollection(collectionSet);
-
+        acceptCollection(collectionSet);
     }
 
     @Override
     public void close() throws Exception {
         // TODO Auto-generated method stub
-
     }
 
     public ThresholdingSessionKeyImpl getKey() {
@@ -82,7 +77,7 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
         return rrdRepository;
     }
 
-    private void acceptLatencyCollection(CollectionSet collectionSet) {
+    private void acceptCollection(CollectionSet collectionSet) {
         ThresholdingVisitor thresholdingVisitor = service.getThresholdingVistor(this);
 
         if (thresholdingVisitor == null) {

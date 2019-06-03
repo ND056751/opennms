@@ -376,6 +376,13 @@ public class ThresholdingSetImpl implements ThresholdingSet {
      * @return a boolean.
      */
     protected boolean passedThresholdFilters(CollectionResourceWrapper resource, ThresholdEntity thresholdEntity) {
+        // Check Valid Interface Resource based on suggestions from Bug 2711
+        if (resource.isAnInterfaceResource() && !resource.isValidInterfaceResource()) {
+            LOG.info("passedThresholdFilters: Could not get data interface information for '{}' or this interface has an invalid ifIndex.  Not evaluating threshold.",
+                     resource.getIfLabel());
+            return false;
+        }
+
         // Find the filters for threshold definition for selected group/dataSource
         final List<ResourceFilter> filters = thresholdEntity.getThresholdConfig().getBasethresholddef().getResourceFilters();
         if (filters.size() == 0) return true;
@@ -536,7 +543,7 @@ public class ThresholdingSetImpl implements ThresholdingSet {
         Map<String, Set<ThresholdEntity>> entityMap = null;
         if (CollectionResource.RESOURCE_TYPE_NODE.equals(resourceType)) {
             entityMap = thresholdGroup.getNodeResourceType().getThresholdMap();
-        } else if (CollectionResource.RESOURCE_TYPE_IF.equals(resourceType)) {
+        } else if (CollectionResource.RESOURCE_TYPE_IF.equals(resourceType) || CollectionResource.RESOURCE_TYPE_LATENCY.equals(resourceType)) {
             entityMap = thresholdGroup.getIfResourceType().getThresholdMap();
         } else {
             Map<String, ThresholdResourceType> typeMap = thresholdGroup.getGenericResourceTypeMap();

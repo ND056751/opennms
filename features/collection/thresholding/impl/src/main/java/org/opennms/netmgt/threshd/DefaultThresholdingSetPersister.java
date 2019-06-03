@@ -64,4 +64,9 @@ public class DefaultThresholdingSetPersister implements ThresholdingSetPersister
         return tSet;
     }
 
+    @Override
+    public void clear() {
+        thresholdingSets.clear();
+    }
+
 }

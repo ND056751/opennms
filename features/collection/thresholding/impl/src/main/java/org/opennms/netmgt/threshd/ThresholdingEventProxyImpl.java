@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.opennms.netmgt.events.api.EventIpcManager;
+import org.opennms.netmgt.events.api.EventProxy;
 import org.opennms.netmgt.events.api.EventProxyException;
 import org.opennms.netmgt.xml.event.Event;
 import org.opennms.netmgt.xml.event.Events;
@@ -51,7 +52,7 @@ public class ThresholdingEventProxyImpl implements ThresholdingEventProxy {
 
     private List<Event> m_events;
 
-    private EventIpcManager m_eventMgr;
+    private EventProxy m_eventMgr;
 
     /**
      * <p>Constructor for ThresholdingEventProxy.</p>
@@ -60,16 +61,16 @@ public class ThresholdingEventProxyImpl implements ThresholdingEventProxy {
         m_events = new LinkedList<>();
     }
 
-    public ThresholdingEventProxyImpl(EventIpcManager eventMgr) {
+    public ThresholdingEventProxyImpl(EventProxy eventMgr) {
         m_eventMgr = eventMgr;
         m_events = new LinkedList<>();
     }
 
-    public EventIpcManager getEventMgr() {
+    public EventProxy getEventMgr() {
         return m_eventMgr;
     }
 
-    public void setEventMgr(EventIpcManager eventMgr) {
+    public void setEventMgr(EventProxy eventMgr) {
         this.m_eventMgr = eventMgr;
     }
     
@@ -129,7 +130,7 @@ public class ThresholdingEventProxyImpl implements ThresholdingEventProxy {
                     events.addEvent(e);
                 }
                 log.setEvents(events);
-                m_eventMgr.sendNow(log);
+                m_eventMgr.send(log);
             } catch (Throwable e) {
                 LOG.info("sendAllEvents: Failed sending threshold events", e);
             }
@@ -139,7 +140,11 @@ public class ThresholdingEventProxyImpl implements ThresholdingEventProxy {
 
     @Override
     public void sendEvent(Event event) {
-        m_eventMgr.sendNow(event);
+        try {
+            m_eventMgr.send(event);
+        } catch (EventProxyException e) {
+            LOG.error("Failed to send {} ", event, e);
+        }
     }
 
 }

@@ -166,19 +166,19 @@ public class CollectionResourceWrapper {
             } else if (resource instanceof IfInfo) {
                 m_iflabel = ((IfInfo) resource).getInterfaceLabel();
                 m_ifInfo.putAll(((IfInfo) resource).getAttributesMap());
-            } else if (resource instanceof LatencyCollectionResource) {
-                m_iflabel = ((LatencyCollectionResource) resource).getIfLabel();
-                if (m_iflabel != null) { // See Bug 3488
-                    m_ifInfo.putAll(((LatencyCollectionResource) resource).getIfInfo());
-                } else {
-                    LOG.info("Can't find ifLabel for latency resource {} on node {}", resource.getInstance(), getNodeId());
-                }
             } else {
                 LOG.info("Can't find ifInfo for {}", resource);
                 m_iflabel = null;
             }
-        
             m_ifindex = m_ifInfo.get("snmpifindex");
+        } else if (isLatencyResource()) {
+            m_iflabel = ((LatencyCollectionResource) resource).getIfLabel();
+            if (m_iflabel != null) { // See Bug 3488
+                m_ifInfo.putAll(((LatencyCollectionResource) resource).getIfInfo());
+            } else {
+                LOG.info("Can't find ifLabel for latency resource {} on node {}", resource.getInstance(), getNodeId());
+            }
+            m_ifindex = null;
         } else {
             m_ifindex = null;
             m_iflabel = null;
@@ -334,6 +334,10 @@ public class CollectionResourceWrapper {
         } else {
             return null;
         }
+    }
+
+    public boolean isLatencyResource() {
+        return getResourceTypeName() != null && CollectionResource.RESOURCE_TYPE_LATENCY.equals(getResourceTypeName());
     }
 
     /**
@@ -527,4 +531,5 @@ public class CollectionResourceWrapper {
     public String toString() {
         return m_resource.toString();
     }
+
 }

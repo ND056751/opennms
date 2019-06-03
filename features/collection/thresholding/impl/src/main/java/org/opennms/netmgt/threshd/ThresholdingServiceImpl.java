@@ -66,7 +66,6 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     public void nodeGainedService(Event event) throws InsufficientInformationException {
         LOG.debug(event.toString());
         EventUtils.checkNodeId(event);
-
         // Trigger re-evaluation of Threshold Packages, re-evaluating Filters.
         ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
     }
@@ -75,7 +74,6 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     public void handlenodeCategoryChanged(Event event) throws InsufficientInformationException {
         LOG.debug(event.toString());
         EventUtils.checkNodeId(event);
-
         // Trigger re-evaluation of Threshold Packages, re-evaluating Filters.
         ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
     }
@@ -91,36 +89,29 @@ public class ThresholdingServiceImpl implements ThresholdingService {
             }
         }
         if (isThresholds) {
-            // TODO - do something
+            try {
+                ThreshdConfigFactory.reload();
+                ThresholdingConfigFactory.reload();
+                thresholdingSetPersister.clear();
+            } catch (final Exception e) {
+                throw new RuntimeException("Unable to reload thresholding.", e);
+            }
         }
     }
 
     @Override
     public ThresholdingSession createSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters serviceParams,
             ResourceStorageDao resourceStorageDao) throws ThresholdInitializationException {
-        // TODO Auto-generated method stub
-        ThresholdingSessionKeyImpl key = null; // FIXME - create key from attrs
+        ThresholdingSessionKeyImpl sessionKey = new ThresholdingSessionKeyImpl(nodeId, hostAddress, serviceName, serviceName, serviceName);
         ThresholdingSet thresholdingSet = new CollectorThresholdingSet(nodeId, hostAddress, serviceName, repository, serviceParams, resourceStorageDao, eventProxy);
-        ThresholdingSession session = new ThresholdingSessionImpl(this, key, resourceStorageDao, repository);
+        ThresholdingSession session = new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
         thresholdingSetPersister.persistSet(session, thresholdingSet);
         return session;
     }
 
     public ThresholdingVisitorImpl getThresholdingVistor(ThresholdingSession session) {
-        // TODO What is the key? Location,. Node, iFace, service, - is TYPE part of it??
-
         ThresholdingSet thresholdingSet = thresholdingSetPersister.getThresholdingSet(session, eventProxy);
-
         return new ThresholdingVisitorImpl(thresholdingSet, session.getResourceDao(), eventProxy);
-    }
-
-    @Override
-    public ThresholdingSession getLatencyThresholdingSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters m_params,
-            ResourceStorageDao resourceStorageDao) {
-
-        // FIXME - SessionKey attrs not correct
-        ThresholdingSessionKeyImpl sessionKey = new ThresholdingSessionKeyImpl(nodeId, hostAddress, serviceName, serviceName, serviceName);
-        return new LatencyThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
     }
 
     public ThresholdingEventProxy getEventProxy() {

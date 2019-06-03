@@ -42,10 +42,4 @@ public class MockThresholdingService implements ThresholdingService {
         return new MockThresholdingSession();
     }
 
-    @Override
-    public ThresholdingSession getLatencyThresholdingSession(int m_nodeId, String hostAddress, String serviceName, RrdRepository m_repository, ServiceParameters m_params,
-            ResourceStorageDao m_resourceStorageDao) {
-        return new MockThresholdingSession();
-    }
-
 }

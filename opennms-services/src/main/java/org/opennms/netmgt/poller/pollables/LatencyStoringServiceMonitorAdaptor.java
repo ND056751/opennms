@@ -147,7 +147,7 @@ public class LatencyStoringServiceMonitorAdaptor implements ServiceMonitorAdapto
                 // FIXME remove repository
                 // FIXME remote resourceStorageDao
                 ServiceParameters serviceParams = new ServiceParameters(new HashMap<>());
-                m_thresholdingSession = m_thresholdingService.getLatencyThresholdingSession(service.getNodeId(), 
+                m_thresholdingSession = m_thresholdingService.createSession(service.getNodeId(), 
                                                                             service.getIpAddr(),
                                                                             service.getSvcName(),
                                                                          null,

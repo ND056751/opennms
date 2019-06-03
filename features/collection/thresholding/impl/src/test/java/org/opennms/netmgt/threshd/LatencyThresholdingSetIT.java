@@ -30,7 +30,6 @@ package org.opennms.netmgt.threshd;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opennms.core.utils.InetAddressUtils.addr;
 
@@ -47,6 +46,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -61,8 +61,8 @@ import org.opennms.core.test.db.TemporaryDatabaseAware;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.netmgt.collection.api.CollectionAttribute;
-import org.opennms.netmgt.collection.api.CollectionResource;
 import org.opennms.netmgt.collection.api.CollectionSet;
+import org.opennms.netmgt.collection.api.CollectionStatus;
 import org.opennms.netmgt.collection.api.LatencyCollectionAttribute;
 import org.opennms.netmgt.collection.api.LatencyCollectionAttributeType;
 import org.opennms.netmgt.collection.api.LatencyCollectionResource;
@@ -139,10 +139,14 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
     private Map<String, String> mockIfInfo;
 
     @Autowired
-    private ThresholdingEventProxy m_eventProxy;
-
-    @Autowired
     private ThresholdingService m_thresholdingService;
+
+    private int m_nodeId = 1;
+    private String m_svcName = "HTTP";
+    private String m_ipAddress = "127.0.0.1";
+    private ServiceParameters m_serviceParams = new ServiceParameters(Collections.emptyMap());
+    private String m_location = null;
+
 
     private static final Comparator<Parm> PARM_COMPARATOR = new Comparator<Parm>() {
         @Override
@@ -288,28 +292,23 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
     @Test
     @JUnitTemporaryDatabase(tempDbClass=MockDatabase.class)
     public void testBug3488() throws Exception {
-        String ipAddress = "127.0.0.1";
-        setupSnmpInterfaceDatabase(m_db, ipAddress, null);
+        setupSnmpInterfaceDatabase(m_db, m_ipAddress, null);
         EasyMock.expect(m_ifLabelDao.getIfLabel(EasyMock.anyInt(), EasyMock.anyObject(InetAddress.class))).andReturn(IfLabel.NO_IFLABEL).anyTimes();
         EasyMock.expect(m_ifLabelDao.getInterfaceInfoFromIfLabel(EasyMock.anyInt(), EasyMock.anyString())).andReturn(mockIfInfo).anyTimes();
         EasyMock.replay(m_ifLabelDao);
 
-        LatencyThresholdingSetImpl thresholdingSet = new LatencyThresholdingSetImpl(1, ipAddress, "HTTP", null, getRepository(), m_resourceStorageDao, m_eventProxy);
-        assertTrue(thresholdingSet.hasThresholds()); // Global Test
-        LatencyCollectionResource resource = new LatencyCollectionResource("http", ipAddress, null, IfLabel.NO_IFLABEL, Collections.emptyMap());
+        LatencyCollectionResource resource = new LatencyCollectionResource(m_svcName, m_ipAddress, null, IfLabel.NO_IFLABEL, Collections.emptyMap());
         LatencyCollectionAttributeType type = new LatencyCollectionAttributeType();
         CollectionAttribute collectionAttribute = new LatencyCollectionAttribute(resource, type, "http", 200.0);
         resource.addAttribute(collectionAttribute);
-
-        assertTrue(thresholdingSet.hasThresholds(collectionAttribute)); // Datasource Test
-
-        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 200.0, IfLabel.NO_IFLABEL, "127.0.0.1[http]", "http", IfLabel.NO_IFLABEL, null,
-                 m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
-        ServiceParameters params = new ServiceParameters(Collections.emptyMap());
-        ThresholdingSession thresholdingSession = m_thresholdingService.getLatencyThresholdingSession(1, ipAddress, "HTTP", getRepository(), params, m_resourceStorageDao);
         CollectionSet collectionSet = new SingleResourceCollectionSet(resource, new Date());
+
+        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 200.0, IfLabel.NO_IFLABEL, "127.0.0.1[HTTP]", "http", IfLabel.NO_IFLABEL, null,
+                 m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
+
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams, m_resourceStorageDao);
         for (int i = 0; i < 5; i++) {
-            thresholdingSession.accept(collectionSet);
+            session.accept(collectionSet);
         }
 
         verifyEvents(0);
@@ -324,15 +323,12 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
     @JUnitTemporaryDatabase(tempDbClass=MockDatabase.class)
     public void testBug3575() throws Exception {
         initFactories("/threshd-configuration-bug3575.xml","/test-thresholds-bug3575.xml");
-        String ipAddress = "127.0.0.1";
         String ifName = "eth0";
-        setupSnmpInterfaceDatabase(m_db, ipAddress, ifName);
+        setupSnmpInterfaceDatabase(m_db, m_ipAddress, ifName);
         EasyMock.expect(m_ifLabelDao.getIfLabel(EasyMock.anyInt(), EasyMock.anyObject(InetAddress.class))).andReturn(ifName).anyTimes();
         EasyMock.expect(m_ifLabelDao.getInterfaceInfoFromIfLabel(EasyMock.anyInt(), EasyMock.anyString())).andReturn(mockIfInfo).anyTimes();
         EasyMock.replay(m_ifLabelDao);
 
-        LatencyThresholdingSetImpl thresholdingSet = new LatencyThresholdingSetImpl(1, ipAddress, "StrafePing", null, getRepository(), m_resourceStorageDao, m_eventProxy);
-        assertTrue(thresholdingSet.hasThresholds());
         Map<String, Double> attributes = new HashMap<String, Double>();
         for (double i=1; i<21; i++) {
             attributes.put("ping" + i, 2 * i);
@@ -340,11 +336,14 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
         attributes.put("loss", 60.0);
         attributes.put("median", 100.0);
         attributes.put(PollStatus.PROPERTY_RESPONSE_TIME, 100.0);
-        assertTrue(thresholdingSet.hasThresholds(attributes));
 
-        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "StrafePing", 1, 50.0, 25.0, 60.0, ifName, "127.0.0.1[StrafePing]", "loss", "eth0", null,
+        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, m_ipAddress, "StrafePing", 1, 50.0, 25.0, 60.0, ifName, "127.0.0.1[StrafePing]", "loss", "eth0", null,
                  m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
-        thresholdingSet.applyThresholds("StrafePing", attributes, m_ifLabelDao);
+
+        ServiceParameters serviceParams = new ServiceParameters(Collections.emptyMap());
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, "StrafePing", getRepository(), serviceParams, m_resourceStorageDao);
+        CollectionSet collectionSet = getCollectionSet(1, m_ipAddress, "StrafePing", m_location, getRepository(), attributes);
+        session.accept(collectionSet);
 
         verifyEvents(0);
     }
@@ -360,44 +359,42 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
     public void testLatencyThresholdingSet() throws Exception {
         Integer ifIndex = 1;
         String ifName = "lo0";
-        setupSnmpInterfaceDatabase(m_db, "127.0.0.1", ifName);
+        setupSnmpInterfaceDatabase(m_db, m_ipAddress, ifName);
         mockIfInfo.put("snmpifindex", "1");
         EasyMock.expect(m_ifLabelDao.getIfLabel(EasyMock.anyInt(), EasyMock.anyObject(InetAddress.class))).andReturn(ifName).anyTimes();
         EasyMock.expect(m_ifLabelDao.getInterfaceInfoFromIfLabel(EasyMock.anyInt(), EasyMock.anyString())).andReturn(mockIfInfo).anyTimes();
         EasyMock.replay(m_ifLabelDao);
 
-        LatencyThresholdingSetImpl thresholdingSet = new LatencyThresholdingSetImpl(1, "127.0.0.1", "HTTP", null, getRepository(), m_resourceStorageDao, m_eventProxy);
-        assertTrue(thresholdingSet.hasThresholds()); // Global Test
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams, m_resourceStorageDao);
+
         Map<String, Double> attributes = new HashMap<String, Double>();
         attributes.put("http", 90.0);
-        assertTrue(thresholdingSet.hasThresholds(attributes)); // Datasource Test
-        thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
+        CollectionSet collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+
+        session.accept(collectionSet);
 
         // Test Trigger
         attributes.put("http", 200.0);
+        collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
         for (int i = 1; i < 5; i++) {
             LOG.debug("testLatencyThresholdingSet: run number {}", i);
-            if (thresholdingSet.hasThresholds(attributes)) {
-                thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
-            }
+            session.accept(collectionSet);
         }
         verifyEvents(0);
 
-        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 200.0, ifName, "127.0.0.1[http]", "http", ifName, ifIndex.toString(),
+        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 200.0, ifName, "127.0.0.1[HTTP]", "http", ifName, null,
                  m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
-        if (thresholdingSet.hasThresholds(attributes)) {
-            LOG.debug("testLatencyThresholdingSet: run number 5");
-            thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
-        }
+        LOG.debug("testLatencyThresholdingSet: run number 5");
+        session.accept(collectionSet);
+
         verifyEvents(0);
 
         // Test Rearm
-        addEvent(EventConstants.HIGH_THRESHOLD_REARM_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 40.0, ifName, "127.0.0.1[http]", "http", ifName, ifIndex.toString(),
+        addEvent(EventConstants.HIGH_THRESHOLD_REARM_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 40.0, ifName, "127.0.0.1[HTTP]", "http", ifName, null,
                  m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
-        if (thresholdingSet.hasThresholds(attributes)) {
-            attributes.put("http", 40.0);
-            thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
-        }
+        attributes.put("http", 40.0);
+        collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+        session.accept(collectionSet);
         verifyEvents(0);
     }
 
@@ -412,50 +409,49 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
     @JUnitTemporaryDatabase(tempDbClass=MockDatabase.class)
     public void testCounterReset() throws Exception {
         String ifName = "lo0";
-        setupSnmpInterfaceDatabase(m_db, "127.0.0.1", ifName);
+        setupSnmpInterfaceDatabase(m_db, m_ipAddress, ifName);
         EasyMock.expect(m_ifLabelDao.getIfLabel(EasyMock.anyInt(), EasyMock.anyObject(InetAddress.class))).andReturn(ifName).anyTimes();
         EasyMock.expect(m_ifLabelDao.getInterfaceInfoFromIfLabel(EasyMock.anyInt(), EasyMock.anyString())).andReturn(mockIfInfo).anyTimes();
         EasyMock.replay(m_ifLabelDao);
 
-        LatencyThresholdingSetImpl thresholdingSet = new LatencyThresholdingSetImpl(1, "127.0.0.1", "HTTP", null, getRepository(), m_resourceStorageDao, m_eventProxy);
-        assertTrue(thresholdingSet.hasThresholds()); // Global Test
+        ThresholdingSession session = m_thresholdingService.createSession(m_nodeId, m_ipAddress, m_svcName, getRepository(), m_serviceParams, m_resourceStorageDao);
+
         Map<String, Double> attributes = new HashMap<String, Double>();
         attributes.put("http", 90.0);
-        assertTrue(thresholdingSet.hasThresholds(attributes)); // Datasource Test
-        thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
+
+        CollectionSet collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+        session.accept(collectionSet);
 
         // Testing trigger the threshold 3 times
         attributes.put("http", 200.0);
         for (int i = 1; i <= 3; i++) {
             LOG.debug("testLatencyThresholdingSet: ------------------------------------ trigger number {}", i);
-            if (thresholdingSet.hasThresholds(attributes)) {
-                thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
-            }
+            collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+            session.accept(collectionSet);
         }
         
         // This should reset the counter
         attributes.put("http", 40.0);
         LOG.debug("testLatencyThresholdingSet: ------------------------------------ reseting counter");
-        thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
+        collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+        session.accept(collectionSet);
 
         // Increase the counter again two times, no threshold should be generated
         attributes.put("http", 300.0);
         for (int i = 4; i <= 5; i++) {
             LOG.debug("testLatencyThresholdingSet: ------------------------------------ trigger number {}", i);
-            if (thresholdingSet.hasThresholds(attributes)) {
-                thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
-            }
+            collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+            session.accept(collectionSet);
         }
 
-        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 300.0, ifName, "127.0.0.1[http]", "http", ifName, null,
+        addEvent(EventConstants.HIGH_THRESHOLD_EVENT_UEI, "127.0.0.1", "HTTP", 5, 100.0, 50.0, 300.0, ifName, "127.0.0.1[HTTP]", "http", ifName, null,
                  m_eventIpcManager.getEventAnticipator(), m_anticipatedEvents);
 
         // Increase 3 more times and now, the threshold event should be triggered.
         for (int i = 6; i <= 8; i++) {
             LOG.debug("testLatencyThresholdingSet: ------------------------------------ trigger number {}", i);
-            if (thresholdingSet.hasThresholds(attributes)) {
-                thresholdingSet.applyThresholds("http", attributes, m_ifLabelDao);
-            }
+            collectionSet = getCollectionSet(m_nodeId, m_ipAddress, m_svcName, m_location, getRepository(), attributes);
+            session.accept(collectionSet);
         }
         
         verifyEvents(0);
@@ -576,5 +572,28 @@ public class LatencyThresholdingSetIT implements TemporaryDatabaseAware<MockData
         } else {
             assertEquals(new Integer(1), m_jdbcTemplate.queryForObject("select count(*) from snmpInterface where id = '1' and nodeid = '1' and snmpifIndex = '1' and snmpifalias = '" + ifName + "' and snmpifdescr = '" + ifName + "'", Integer.class));
         }
+    }
+
+    private CollectionSet getCollectionSet(int nodeId, String ipAddr, String svcName, String location, RrdRepository rrdRepository, Map<String, Double> attributes) {
+        String ifLabel = "";
+        Map<String, String> ifInfo = new HashMap<>();
+        if (m_ifLabelDao != null) {
+            ifLabel = m_ifLabelDao.getIfLabel(nodeId, InetAddressUtils.addr(ipAddr));
+            if (ifLabel != null) {
+                ifInfo.putAll(m_ifLabelDao.getInterfaceInfoFromIfLabel(nodeId, ifLabel));
+            }
+        }
+        LatencyCollectionResource latencyResource = new LatencyCollectionResource(svcName, ipAddr, location, ifLabel, ifInfo);
+        for (final Entry<String, Double> entry : attributes.entrySet()) {
+            final String ds = entry.getKey();
+            final Number value = entry.getValue() != null ? entry.getValue() : Double.NaN;
+            LatencyCollectionAttributeType latencyType = new LatencyCollectionAttributeType(rrdRepository.getRrdBaseDir().getName(), ds);
+            latencyResource.addAttribute(new LatencyCollectionAttribute(latencyResource, latencyType, ds, value.doubleValue()));
+        }
+
+        SingleResourceCollectionSet collectionSet = new SingleResourceCollectionSet(latencyResource, new Date());
+        collectionSet.setStatus(CollectionStatus.SUCCEEDED);
+
+        return collectionSet;
     }
 }

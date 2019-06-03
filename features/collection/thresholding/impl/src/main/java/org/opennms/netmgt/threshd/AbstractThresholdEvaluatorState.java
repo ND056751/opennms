@@ -95,6 +95,19 @@ public abstract class AbstractThresholdEvaluatorState implements ThresholdEvalua
                 bldr.addParam("ifIpAddress", ipaddr);
             }
         }
+        // legacy behaviour for Latency was same as InterfaceResource
+        if (resource.isLatencyResource()) {
+            // Update threshold label if it is unknown. This is useful because usually reduction-key is associated to label parameter
+            if (UNKNOWN.equals(dsLabelValue))
+                dsLabelValue = resource.getIfLabel();
+            // Set interface specific parameters
+            bldr.addParam("ifLabel", resource.getIfLabel());
+            bldr.addParam("ifIndex", resource.getIfIndex());
+            String ipaddr = resource.getIfInfoValue("ipaddr");
+            if (ipaddr != null && !"0.0.0.0".equals(ipaddr)) {
+                bldr.addParam("ifIpAddress", ipaddr);
+            }
+        }
         if (resource.isNodeResource() && UNKNOWN.equals(dsLabelValue)) {
             dsLabelValue = CollectionResource.RESOURCE_TYPE_NODE;
         }
