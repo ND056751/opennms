@@ -29,10 +29,7 @@
 package org.opennms.netmgt.mock;
 
 import org.opennms.netmgt.collection.api.CollectionSet;
-import org.opennms.netmgt.dao.api.ResourceStorageDao;
-import org.opennms.netmgt.rrd.RrdRepository;
 import org.opennms.netmgt.threshd.ThresholdingSession;
-import org.opennms.netmgt.threshd.ThresholdingSessionKey;
 
 public class MockThresholdingSession implements ThresholdingSession {
 
@@ -42,21 +39,6 @@ public class MockThresholdingSession implements ThresholdingSession {
 
     @Override
     public void accept(CollectionSet collectionSet) {
-    }
-
-    @Override
-    public ThresholdingSessionKey getKey() {
-        return null;
-    }
-
-    @Override
-    public ResourceStorageDao getResourceDao() {
-        return null;
-    }
-
-    @Override
-    public RrdRepository getRrdRepository() {
-        return null;
     }
 
 }
