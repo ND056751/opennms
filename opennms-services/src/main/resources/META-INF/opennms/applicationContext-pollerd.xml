@@ -42,7 +42,7 @@
       <property name="pollerConfig" ref="pollerConfig" />
       <property name="pollOutagesConfig" ref="pollOutagesConfig" />
       <property name="eventIpcManager" ref="eventIpcManager"/>
-      <property name="thresholdingFactory" ref="thresholdingFactory"/>
+      <property name="thresholdingService" ref="thresholdingService"/>
       <property name="ifLabelDao" ref="ifLabelDao"/>
     </bean>
     
