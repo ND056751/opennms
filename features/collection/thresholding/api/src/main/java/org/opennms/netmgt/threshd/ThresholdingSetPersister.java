@@ -54,6 +54,11 @@ public interface ThresholdingSetPersister {
     ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy);
 
     /**
+     * Called to make ThresholdingSets reload configuration.
+     */
+    void reinitializeThresholdingSets();
+
+    /**
      * Invalidate all existing {@link ThresholdingSet}s.
      */
     void clear();

@@ -31,6 +31,9 @@ package org.opennms.netmgt.threshd;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opennms.netmgt.config.ThreshdConfigFactory;
+import org.opennms.netmgt.config.ThreshdConfigManager;
+
 /**
  * HashMap implementation of a {@link ThresholdingSetPersister}.
  */
@@ -63,6 +66,11 @@ public class DefaultThresholdingSetPersister implements ThresholdingSetPersister
             }
         }
         return tSet;
+    }
+
+    @Override
+    public void reinitializeThresholdingSets() {
+        thresholdingSets.values().forEach(set -> set.reinitialize());
     }
 
     @Override

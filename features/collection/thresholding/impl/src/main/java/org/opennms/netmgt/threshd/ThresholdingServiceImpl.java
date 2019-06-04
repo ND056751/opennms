@@ -93,11 +93,16 @@ public class ThresholdingServiceImpl implements ThresholdingService {
             try {
                 ThreshdConfigFactory.reload();
                 ThresholdingConfigFactory.reload();
-                thresholdingSetPersister.clear();
+                thresholdingSetPersister.reinitializeThresholdingSets();
             } catch (final Exception e) {
                 throw new RuntimeException("Unable to reload thresholding.", e);
             }
         }
+    }
+
+    @EventHandler(uei = EventConstants.THRESHOLDCONFIG_CHANGED_EVENT_UEI)
+    public void reinitializeThresholdingSets() {
+        thresholdingSetPersister.reinitializeThresholdingSets();
     }
 
     @Override
@@ -130,10 +135,6 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     public void setThresholdingSetPersister(ThresholdingSetPersister thresholdingSetPersister) {
         this.thresholdingSetPersister = thresholdingSetPersister;
     }
-
-    // Send?
-    // thresholds configuration change
-    // ueiList.add(EventConstants.THRESHOLDCONFIG_CHANGED_EVENT_UEI);
 
     @PostConstruct
     private void init() {
