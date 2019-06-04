@@ -98,7 +98,7 @@ public class CollectorThresholdingSet extends ThresholdingSetImpl {
      */
     public boolean hasThresholds(CollectionAttribute attribute) {
         CollectionResource resource = attribute.getResource();
-        if (!isCollectionEnabled(attribute.getResource()))
+        if (!isCollectionEnabled(resource))
             return false;
         if (resource instanceof AliasedResource && !storeByIfAlias)
             return false;

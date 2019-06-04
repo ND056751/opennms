@@ -40,13 +40,13 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
 
     protected final ThresholdingServiceImpl service;
 
-    protected final ThresholdingSessionKeyImpl sessionKey;
+    protected final ThresholdingSessionKey sessionKey;
 
     protected final ResourceStorageDao resourceStorageDao;
 
     protected final RrdRepository rrdRepository;
 
-    public ThresholdingSessionImpl(ThresholdingServiceImpl service, ThresholdingSessionKeyImpl sessionKey, ResourceStorageDao resourceStorageDao, RrdRepository rrdRepository) {
+    public ThresholdingSessionImpl(ThresholdingServiceImpl service, ThresholdingSessionKey sessionKey, ResourceStorageDao resourceStorageDao, RrdRepository rrdRepository) {
         this.service = service;
         this.sessionKey = sessionKey;
         this.resourceStorageDao = resourceStorageDao;
@@ -63,7 +63,7 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
         // TODO Auto-generated method stub
     }
 
-    public ThresholdingSessionKeyImpl getKey() {
+    public ThresholdingSessionKey getKey() {
         return sessionKey;
     }
 

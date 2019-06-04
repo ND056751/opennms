@@ -103,10 +103,10 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     @Override
     public ThresholdingSession createSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters serviceParams)
             throws ThresholdInitializationException {
-        ThresholdingSessionKeyImpl sessionKey = new ThresholdingSessionKeyImpl(nodeId, hostAddress, serviceName, serviceName, serviceName);
-        ThresholdingSet thresholdingSet = new CollectorThresholdingSet(nodeId, hostAddress, serviceName, repository, serviceParams, resourceStorageDao, eventProxy);
+        ThresholdingSessionKey sessionKey = new ThresholdingSessionKey(nodeId, hostAddress, serviceName, serviceName, serviceName);
+        // ThresholdingSet thresholdingSet = new CollectorThresholdingSet(nodeId, hostAddress, serviceName, repository, serviceParams, resourceStorageDao, eventProxy);
         ThresholdingSession session = new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
-        thresholdingSetPersister.persistSet(session, thresholdingSet);
+        // thresholdingSetPersister.persistSet(session, thresholdingSet);
         return session;
     }
 
