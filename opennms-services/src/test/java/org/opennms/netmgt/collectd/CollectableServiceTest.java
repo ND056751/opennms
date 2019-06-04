@@ -247,7 +247,7 @@ public class CollectableServiceTest {
 
         ThresholdingService mockThresholdingService = mock(ThresholdingService.class, RETURNS_DEEP_STUBS);
 
-        service = new CollectableService(iface, ifaceDao, spec, scheduler, schedulingCompletedFlag, transMgr, persisterFactory, mockThresholdingService, resourceStorageDao);
+        service = new CollectableService(iface, ifaceDao, spec, scheduler, schedulingCompletedFlag, transMgr, persisterFactory, mockThresholdingService);
     }
 
     private RrdRepository createRrdRepository() throws IOException {

@@ -143,13 +143,12 @@ public class LatencyStoringServiceMonitorAdaptor implements ServiceMonitorAdapto
             if (m_thresholdingSession == null) {
                 // FIXME remove or initialize serviceparams
                 // FIXME remove repository
-                // FIXME remote resourceStorageDao
                 ServiceParameters serviceParams = new ServiceParameters(new HashMap<>());
                 m_thresholdingSession = m_thresholdingService.createSession(service.getNodeId(), 
                                                                             service.getIpAddr(),
                                                                             service.getSvcName(),
                                                                          null,
-                                                                         null);
+                                                                            serviceParams);
             }
             m_thresholdingSession.accept(collectionSet);
         } catch (Throwable e) {

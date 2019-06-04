@@ -302,8 +302,7 @@ public class CollectdTest {
         ThresholdingService mockThresholdingService = m_easyMockUtils.createMock(ThresholdingService.class);
         ThresholdingSession mockThresholdingSession = m_easyMockUtils.createMock(ThresholdingSession.class);
         EasyMock.expect(mockThresholdingService.createSession(EasyMock.anyInt(), EasyMock.anyString(), 
-                                              EasyMock.anyString(), EasyMock.anyObject(), EasyMock.anyObject(),
-                                              EasyMock.anyObject())).andReturn(mockThresholdingSession);
+                                                              EasyMock.anyString(), EasyMock.anyObject(), EasyMock.anyObject())).andReturn(mockThresholdingSession);
 
         m_collectd.setThresholdingService(mockThresholdingService);
 
