@@ -80,6 +80,7 @@ public class ThresholdingServiceImpl implements ThresholdingService, EventListen
         LOG.debug(event.toString());
         // Trigger re-evaluation of Threshold Packages, re-evaluating Filters.
         ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
+        reinitializeThresholdingSets(event);
     }
 
     @EventHandler(uei = EventConstants.NODE_CATEGORY_MEMBERSHIP_CHANGED_EVENT_UEI)
@@ -87,6 +88,7 @@ public class ThresholdingServiceImpl implements ThresholdingService, EventListen
         LOG.debug(event.toString());
         // Trigger re-evaluation of Threshold Packages, re-evaluating Filters.
         ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
+        reinitializeThresholdingSets(event);
     }
 
     @EventHandler(uei = EventConstants.RELOAD_DAEMON_CONFIG_UEI)

@@ -203,10 +203,6 @@ public class ThresholdIT implements TemporaryDatabaseAware<MockDatabase> {
         eventAnticipator.anticipateEvent(nodeGainedServiceEvent);
         mockEventIpcManager.sendNow(nodeGainedServiceEvent);
 
-        // FIXME - Events are not being handled
-        ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
-        ((ThresholdingServiceImpl) thresholdingService).reinitializeThresholdingSets(null);
-
         // Assert 2 collections are performed and Threshold is not triggered
         collector.resetLatch(2);
         if (!collector.getLatch().await(30, TimeUnit.SECONDS)) {
@@ -238,10 +234,6 @@ public class ThresholdIT implements TemporaryDatabaseAware<MockDatabase> {
         eventAnticipator.anticipateEvent(nodeCategoryChangeEvent);
         mockEventIpcManager.sendNow(nodeCategoryChangeEvent);
 
-        // FIXME - Events are not being handled
-        ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
-        ((ThresholdingServiceImpl) thresholdingService).reinitializeThresholdingSets(null);
-
         // Now wait until our collector was called
         collector.resetLatch(1);
         if (!collector.getLatch().await(30, TimeUnit.SECONDS)) {
@@ -268,10 +260,6 @@ public class ThresholdIT implements TemporaryDatabaseAware<MockDatabase> {
         nodeCategoryChangeEvent = bldr.getEvent();
         eventAnticipator.anticipateEvent(nodeCategoryChangeEvent);
         mockEventIpcManager.sendNow(nodeCategoryChangeEvent);
-
-        // FIXME - Events are not being handled
-        ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
-        ((ThresholdingServiceImpl) thresholdingService).reinitializeThresholdingSets(null);
 
         eventAnticipator.reset();
 
