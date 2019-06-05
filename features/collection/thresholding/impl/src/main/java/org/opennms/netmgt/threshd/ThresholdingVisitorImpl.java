@@ -150,13 +150,6 @@ public class ThresholdingVisitorImpl extends AbstractCollectionSetVisitor implem
         return Collections.unmodifiableList(((ThresholdingSetImpl) m_thresholdingSet).getThresholdGroups());
     }
     
-    /**
-     * Get a list of scheduled outages (for JUnit only at this time).
-     */
-    public List<String> getScheduledOutages() {
-        return Collections.unmodifiableList(((ThresholdingSetImpl) m_thresholdingSet).m_scheduledOutages);
-    }
-
     @Override
     public void visitCollectionSet(CollectionSet set) {
         m_collectionTimestamp = set.getCollectionTimestamp();
@@ -171,10 +164,6 @@ public class ThresholdingVisitorImpl extends AbstractCollectionSetVisitor implem
 
     public void reloadScheduledOutages() throws ThresholdInitializationException {
         ((ThresholdingSetImpl) m_thresholdingSet).updateScheduledOutages();
-    }
-
-    public boolean isNodeInOutage() {
-        return m_thresholdingSet.isNodeInOutage();
     }
 
     /**

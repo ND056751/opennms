@@ -590,16 +590,6 @@ public class ThresholdingSetImpl implements ThresholdingSet {
         return Collections.unmodifiableList(applyThresholds(resourceWrapper, attributesMap));
     }
 
-    @Override
-    public boolean hasThresholds(Map<String, Double> attributes) {
-        if (hasThresholds()) {
-            for (String ds : attributes.keySet())
-                if (hasThresholds("if", ds))
-                    return true;
-        }
-        return false;
-    }
-
     public List<ThresholdGroup> getThresholdGroups() {
         return m_thresholdGroups;
     }

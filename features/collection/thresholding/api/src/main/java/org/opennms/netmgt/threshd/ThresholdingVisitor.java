@@ -61,24 +61,14 @@ public interface ThresholdingVisitor extends CollectionSetVisitor {
     Date getCollectionTimestamp();
 
     /**
-     * Get a list of scheduled outages (for JUnit only at this time).
-     */
-    @VisibleForTesting
-    List<String> getScheduledOutages();
-
-    /**
      * @return TRUE if there are defined thresholds for the node/address/service of the contained ThresholdingSet.
      */
     public boolean hasThresholds();
-
-    public boolean isNodeInOutage();
 
     /**
      * Force reload thresholds configuration, and merge threshold states
      */
     public void reload();
-
-    public void reloadScheduledOutages() throws ThresholdInitializationException;
 
     public void setCounterReset(boolean counterReset);
 

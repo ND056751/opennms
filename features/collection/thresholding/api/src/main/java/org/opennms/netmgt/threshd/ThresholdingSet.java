@@ -49,8 +49,6 @@ public interface ThresholdingSet {
      */
     boolean hasThresholds(final String resourceTypeName, final String attributeName);
 
-    boolean isNodeInOutage();
-
     void reinitialize();
 
     void setCounterReset(boolean counterReset);
@@ -58,8 +56,5 @@ public interface ThresholdingSet {
     boolean hasThresholds(CollectionAttribute attribute);
 
     List<Event> applyThresholds(CollectionResource resource, Map<String, CollectionAttribute> m_attributesMap, Date m_collectionTimestamp);
-
-    @Deprecated
-    boolean hasThresholds(Map<String, Double> attributes);
 
 }

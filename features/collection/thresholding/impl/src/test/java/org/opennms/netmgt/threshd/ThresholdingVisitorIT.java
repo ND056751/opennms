@@ -1304,17 +1304,6 @@ public class ThresholdingVisitorIT {
     }
 
     /**
-     * This test uses this files from src/test/resources: - threshd-configuration-outages.xml - test-thresholds.xml
-     */
-    @Test
-    public void testBug4261_scheduledOutages() throws Exception {
-        initFactories("/threshd-configuration-outages.xml", "/test-thresholds.xml");
-        ThresholdingVisitor visitor = createVisitor();
-        Assert.assertEquals(1, ((ThresholdingVisitorImpl) visitor).getScheduledOutages().size());
-        Assert.assertTrue("is node on outage", visitor.isNodeInOutage());
-    }
-     
-    /**
      * This test uses this files from src/test/resources: - threshd-configuration.xml - test-thresholds-bug5258-a.xml - test-thresholds-bug5258-b.xml
      */
     @Test
