@@ -147,7 +147,7 @@ public class LatencyStoringServiceMonitorAdaptor implements ServiceMonitorAdapto
                 m_thresholdingSession = m_thresholdingService.createSession(service.getNodeId(), 
                                                                             service.getIpAddr(),
                                                                             service.getSvcName(),
-                                                                         null,
+                                                                            null,
                                                                             serviceParams);
             }
             m_thresholdingSession.accept(collectionSet);

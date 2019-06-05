@@ -72,7 +72,7 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     }
 
     @EventHandler(uei = EventConstants.NODE_CATEGORY_MEMBERSHIP_CHANGED_EVENT_UEI)
-    public void handlenodeCategoryChanged(Event event) throws InsufficientInformationException {
+    public void handleNodeCategoryChanged(Event event) throws InsufficientInformationException {
         LOG.debug(event.toString());
         EventUtils.checkNodeId(event);
         // Trigger re-evaluation of Threshold Packages, re-evaluating Filters.
@@ -101,7 +101,7 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     }
 
     @EventHandler(uei = EventConstants.THRESHOLDCONFIG_CHANGED_EVENT_UEI)
-    public void reinitializeThresholdingSets() {
+    public void reinitializeThresholdingSets(Event e) {
         thresholdingSetPersister.reinitializeThresholdingSets();
     }
 
@@ -109,10 +109,7 @@ public class ThresholdingServiceImpl implements ThresholdingService {
     public ThresholdingSession createSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters serviceParams)
             throws ThresholdInitializationException {
         ThresholdingSessionKey sessionKey = new ThresholdingSessionKey(nodeId, hostAddress, serviceName, serviceName, serviceName);
-        // ThresholdingSet thresholdingSet = new CollectorThresholdingSet(nodeId, hostAddress, serviceName, repository, serviceParams, resourceStorageDao, eventProxy);
-        ThresholdingSession session = new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
-        // thresholdingSetPersister.persistSet(session, thresholdingSet);
-        return session;
+        return new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
     }
 
     public ThresholdingVisitorImpl getThresholdingVistor(ThresholdingSession session) {

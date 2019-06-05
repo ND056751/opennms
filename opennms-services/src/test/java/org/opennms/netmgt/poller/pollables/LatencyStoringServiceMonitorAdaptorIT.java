@@ -31,12 +31,7 @@ package org.opennms.netmgt.poller.pollables;
 import static org.easymock.EasyMock.expect;
 import static org.opennms.core.utils.InetAddressUtils.addr;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +50,8 @@ import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.netmgt.collection.api.PersisterFactory;
 import org.opennms.netmgt.config.PollOutagesConfigFactory;
 import org.opennms.netmgt.config.PollerConfig;
+import org.opennms.netmgt.config.ThreshdConfigFactory;
+import org.opennms.netmgt.config.ThresholdingConfigFactory;
 import org.opennms.netmgt.config.poller.Package;
 import org.opennms.netmgt.config.poller.Rrd;
 import org.opennms.netmgt.dao.api.IfLabel;
@@ -74,7 +71,6 @@ import org.opennms.test.JUnitConfigurationEnvironment;
 import org.opennms.test.mock.EasyMockUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OpenNMSJUnit4ClassRunner.class)
@@ -142,6 +138,8 @@ public class LatencyStoringServiceMonitorAdaptorIT implements TemporaryDatabaseA
 
         String previousOpennmsHome = System.setProperty("opennms.home", "src/test/resources");
         PollOutagesConfigFactory.init();
+        ThresholdingConfigFactory.reload();
+        ThreshdConfigFactory.reload();
         System.setProperty("opennms.home", previousOpennmsHome);
 
         MockNetwork network = new MockNetwork();
@@ -176,40 +174,6 @@ public class LatencyStoringServiceMonitorAdaptorIT implements TemporaryDatabaseA
 
         executeThresholdTest(new Double[] {100.0, 10.0}); // This should emulate a trigger and a rearm
         m_eventIpcManager.getEventAnticipator().verifyAnticipated();
-    }
-
-    // TODO: This test will fail if you have a default locale with >3 characters for month, e.g. Locale.FRENCH
-    @Test
-    @JUnitTemporaryDatabase(tempDbClass=MockDatabase.class)
-    public void testThresholdsWithScheduledOutage() throws Exception {
-        DateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
-        final StringBuilder sb = new StringBuilder("<?xml version=\"1.0\"?>");
-        sb.append("<outages>");
-        sb.append("<outage name=\"junit outage\" type=\"specific\">");
-        sb.append("<time begins=\"");
-        sb.append(formatter.format(new Date(System.currentTimeMillis() - 3600000)));
-        sb.append("\" ends=\"");
-        sb.append(formatter.format(new Date(System.currentTimeMillis() + 3600000)));
-        sb.append("\"/>");
-        sb.append("<interface address=\"match-any\"/>");
-        sb.append("</outage>");
-        sb.append("</outages>");
-
-        File file = new File("target/poll-outages.xml");
-        FileWriter writer = new FileWriter(file);
-        writer.write(sb.toString());
-        writer.close();
-
-        PollOutagesConfigFactory oldFactory = PollOutagesConfigFactory.getInstance();
-        PollOutagesConfigFactory.setInstance(new PollOutagesConfigFactory(new FileSystemResource(file)));
-        PollOutagesConfigFactory.getInstance().afterPropertiesSet();
-
-        executeThresholdTest(new Double[] {100.0});
-        m_eventIpcManager.getEventAnticipator().verifyAnticipated();
-
-        // Reset the state of the PollOutagesConfigFactory for any subsequent tests
-        PollOutagesConfigFactory.setInstance(oldFactory);
-        file.delete();
     }
 
     private void executeThresholdTest(Double[] rtValues) throws Exception {
@@ -253,6 +217,8 @@ public class LatencyStoringServiceMonitorAdaptorIT implements TemporaryDatabaseA
                                                                                               m_ifLabelDao);
         // Make sure that the ThresholdingSet initializes with test settings
         String previousOpennmsHome = System.setProperty("opennms.home", "src/test/resources");
+        ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
+
         for (int i=0; i<rtValues.length; i++) {
             adaptor.handlePollResult(svc, parameters, service.poll(svc, parameters));
             Thread.sleep(1000 * step); // Emulate the appropriate wait time prior inserting another value into the RRD files.
@@ -260,5 +226,4 @@ public class LatencyStoringServiceMonitorAdaptorIT implements TemporaryDatabaseA
         System.setProperty("opennms.home", previousOpennmsHome);
         m_mocks.verifyAll();
     }
-
 }
