@@ -124,7 +124,7 @@ public class ThresholdingServiceImpl implements ThresholdingService, EventListen
         return new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
     }
 
-    public ThresholdingVisitorImpl getThresholdingVistor(ThresholdingSession session) {
+    public ThresholdingVisitorImpl getThresholdingVistor(ThresholdingSession session) throws ThresholdInitializationException {
         ThresholdingSet thresholdingSet = thresholdingSetPersister.getThresholdingSet(session, eventProxy);
         return new ThresholdingVisitorImpl(thresholdingSet, ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
     }
@@ -188,6 +188,10 @@ public class ThresholdingServiceImpl implements ThresholdingService, EventListen
             LOG.debug("Unexpected Event for Thresholding: {}", e);
             break;
         }
+    }
+
+    public void close(ThresholdingSessionImpl session) {
+        thresholdingSetPersister.clear(session);
     }
 
 }

@@ -54,13 +54,13 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
     }
 
     @Override
-    public void accept(CollectionSet collectionSet) {
+    public void accept(CollectionSet collectionSet) throws ThresholdInitializationException {
         acceptCollection(collectionSet);
     }
 
     @Override
     public void close() throws Exception {
-        // TODO Auto-generated method stub
+        service.close(this);
     }
 
     public ThresholdingSessionKey getKey() {
@@ -75,7 +75,7 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
         return rrdRepository;
     }
 
-    private void acceptCollection(CollectionSet collectionSet) {
+    private void acceptCollection(CollectionSet collectionSet) throws ThresholdInitializationException {
         ThresholdingVisitor thresholdingVisitor = service.getThresholdingVistor(this);
 
         if (thresholdingVisitor == null) {

@@ -437,7 +437,11 @@ class CollectableService implements ReadyRunnable {
 
                         // Do thresholding
                         if (m_thresholdingSession != null) {
-                            m_thresholdingSession.accept(result);
+                            try {
+                                m_thresholdingSession.accept(result);
+                            } catch (ThresholdInitializationException e) {
+                                LOG.warn("ThresholdInitializationException for {}. Thresholding skipped.", this, e);
+                            }
                         } else {
                             LOG.warn("No thresholding session for {}. Thresholding skipped.", this);
                         }

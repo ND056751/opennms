@@ -50,8 +50,9 @@ public interface ThresholdingSetPersister {
      * @param session
      * @param eventProxy
      * @return
+     * @throws ThresholdInitializationException
      */
-    ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy);
+    ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy) throws ThresholdInitializationException;
 
     /**
      * Called to make ThresholdingSets reload configuration.
@@ -62,4 +63,5 @@ public interface ThresholdingSetPersister {
      * Invalidate all existing {@link ThresholdingSet}s.
      */
     void clear(ThresholdingSession session);
+
 }

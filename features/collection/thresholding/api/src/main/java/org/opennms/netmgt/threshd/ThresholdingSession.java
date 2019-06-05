@@ -34,11 +34,11 @@ import org.opennms.netmgt.xml.event.Event;
 public interface ThresholdingSession extends AutoCloseable {
 
     /**
-     * Accepts a {@link CollectionSet} for threshold evaluation.
-     * The service will send {@link Event}s if Thresholds are triggered or re-armed.
+     * Accepts a {@link CollectionSet} for threshold evaluation. The service will send {@link Event}s if Thresholds are triggered or re-armed.
      * 
      * @param collectionSet
+     * @throws ThresholdInitializationException
      */
-    void accept(CollectionSet collectionSet);
+    void accept(CollectionSet collectionSet) throws ThresholdInitializationException;
 
 }

@@ -141,8 +141,6 @@ public class LatencyStoringServiceMonitorAdaptor implements ServiceMonitorAdapto
     private void applyThresholds(File repository, CollectionSet collectionSet, String rrdPath, MonitoredService service, String dsName, Map<String, Number> entries) {
         try {
             if (m_thresholdingSession == null) {
-                // FIXME remove or initialize serviceparams
-                // FIXME remove repository
                 ServiceParameters serviceParams = new ServiceParameters(new HashMap<>());
                 m_thresholdingSession = m_thresholdingService.createSession(service.getNodeId(), 
                                                                             service.getIpAddr(),

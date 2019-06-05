@@ -46,18 +46,13 @@ public class DefaultThresholdingSetPersister implements ThresholdingSetPersister
     }
 
     @Override
-    public ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy) {
+    public ThresholdingSet getThresholdingSet(ThresholdingSession session, ThresholdingEventProxy eventProxy) throws ThresholdInitializationException {
         ThresholdingSessionKey key = ((ThresholdingSessionImpl) session).getKey();
         ThresholdingSet tSet = thresholdingSets.get(key);
         if (tSet == null) {
-            try {
-                tSet = new ThresholdingSetImpl(key.getNodeId(), key.getLocation(), key.getServiceName(), ((ThresholdingSessionImpl) session).getRrdRepository(),
-                                               ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
-                thresholdingSets.put(key, tSet);
-            } catch (ThresholdInitializationException e) {
-                // FIXME - remove this try/catch
-                e.printStackTrace();
-            }
+            tSet = new ThresholdingSetImpl(key.getNodeId(), key.getLocation(), key.getServiceName(), ((ThresholdingSessionImpl) session).getRrdRepository(),
+                                           ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
+            thresholdingSets.put(key, tSet);
         }
         return tSet;
     }
