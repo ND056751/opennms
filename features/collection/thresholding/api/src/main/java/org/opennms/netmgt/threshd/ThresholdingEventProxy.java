@@ -28,8 +28,6 @@
 
 package org.opennms.netmgt.threshd;
 
-import java.util.List;
-
 import org.opennms.netmgt.events.api.EventProxy;
 import org.opennms.netmgt.xml.event.Event;
 
@@ -41,34 +39,6 @@ import org.opennms.netmgt.xml.event.Event;
  */
 public interface ThresholdingEventProxy extends EventProxy {
     
-    /**
-     * <p>add</p>
-     *
-     * @param event a {@link org.opennms.netmgt.xml.event.Event} object.
-     */
-    @Deprecated
-    public void add(Event event);
-
-    /**
-     * <p>add</p>
-     *
-     * @param events a {@link java.util.List} object.
-     */
-    @Deprecated
-    public void add(List<Event> events);
-
-    /**
-     * <p>removeAllEvents</p>
-     */
-    @Deprecated
-    public void removeAllEvents();
-    
-    /**
-     * <p>sendAllEvents</p>
-     */
-    @Deprecated
-    public void sendAllEvents();
-
     public void sendEvent(Event event);
 
 }

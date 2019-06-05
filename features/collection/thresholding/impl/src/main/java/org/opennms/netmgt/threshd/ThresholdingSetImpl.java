@@ -107,7 +107,6 @@ public class ThresholdingSetImpl implements ThresholdingSet {
      *            a long.
      * @throws ThresholdInitializationException
      */
-    // FIXME - remove eventProxy
     public ThresholdingSetImpl(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ResourceStorageDao resourceStorageDao,
             ThresholdingEventProxy eventProxy)
             throws ThresholdInitializationException {
