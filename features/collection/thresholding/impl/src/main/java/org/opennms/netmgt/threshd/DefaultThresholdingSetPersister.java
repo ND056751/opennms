@@ -68,8 +68,9 @@ public class DefaultThresholdingSetPersister implements ThresholdingSetPersister
     }
 
     @Override
-    public void clear() {
-        thresholdingSets.clear();
+    public void clear(ThresholdingSession session) {
+        ThresholdingSessionKey key = ((ThresholdingSessionImpl) session).getKey();
+        thresholdingSets.remove(key);
     }
 
 }

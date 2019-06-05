@@ -124,7 +124,7 @@ public class ThresholdingVisitorImpl extends AbstractCollectionSetVisitor implem
      * </p>
      *
      * @param thresholdingSet
-     *            a {@link org.opennms.netmgt.threshd.CollectorThresholdingSet} object.
+     *            a {@link org.opennms.netmgt.threshd.ThresholdingSet} object.
      * @param eventProxy
      */
     protected ThresholdingVisitorImpl(ThresholdingSet thresholdingSet, ResourceStorageDao resourceStorageDao, ThresholdingEventProxy eventProxy) {

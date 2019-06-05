@@ -30,17 +30,12 @@ package org.opennms.netmgt.threshd;
 
 import org.opennms.netmgt.collection.api.CollectionSet;
 import org.opennms.netmgt.collection.api.ServiceParameters;
-import org.opennms.netmgt.dao.api.ResourceStorageDao;
 import org.opennms.netmgt.rrd.RrdRepository;
 
 /**
  * Thresholding API Service.
  */
 public interface ThresholdingService {
-
-    // TODO - should getSession throw ThresholdInitializationException??
-
-    // TODO - JavaDoc -- TODO - finalize parameters/types
 
     /**
      * Create a {@link ThresholdingSession} for Thresholding on {@link CollectionSet}s.

@@ -61,5 +61,5 @@ public interface ThresholdingSetPersister {
     /**
      * Invalidate all existing {@link ThresholdingSet}s.
      */
-    void clear();
+    void clear(ThresholdingSession session);
 }
