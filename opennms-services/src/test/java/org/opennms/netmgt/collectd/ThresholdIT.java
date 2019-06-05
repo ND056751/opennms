@@ -69,6 +69,7 @@ import org.opennms.netmgt.dao.api.SessionUtils;
 import org.opennms.netmgt.dao.mock.EventAnticipator;
 import org.opennms.netmgt.dao.mock.MockEventIpcManager;
 import org.opennms.netmgt.events.api.EventConstants;
+import org.opennms.netmgt.events.api.EventListener;
 import org.opennms.netmgt.filter.api.FilterDao;
 import org.opennms.netmgt.mock.MockNetwork;
 import org.opennms.netmgt.mock.MockPersisterFactory;
@@ -94,6 +95,8 @@ import com.google.common.collect.Lists;
         "classpath*:/META-INF/opennms/component-dao.xml",
         "classpath:/META-INF/opennms/applicationContext-pinger.xml",
         "classpath:/META-INF/opennms/applicationContext-daemon.xml",
+        "classpath:/META-INF/opennms/applicationContext-eventUtil.xml",
+        "classpath:/META-INF/opennms/applicationContext-eventDaemon.xml",
         "classpath:/META-INF/opennms/applicationContext-thresholding.xml",
         "classpath:/META-INF/opennms/mockEventIpcManager.xml",
         "classpath:/META-INF/opennms/applicationContext-proxy-snmp.xml",
@@ -157,6 +160,7 @@ public class ThresholdIT implements TemporaryDatabaseAware<MockDatabase> {
         // Load custom threshd configuration
         initThreshdFactories("threshd-configuration.xml","test-thresholds.xml");
         ThreshdConfigFactory.getInstance().rebuildPackageIpListMap();
+        mockEventIpcManager.addEventListener((EventListener) thresholdingService, ThresholdingServiceImpl.UEI_LIST);
 
         // Wire and initialize collectd
         Collectd collectd = new Collectd();
