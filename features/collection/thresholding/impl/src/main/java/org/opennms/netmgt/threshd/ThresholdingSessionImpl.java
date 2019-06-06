@@ -29,6 +29,7 @@
 package org.opennms.netmgt.threshd;
 
 import org.opennms.netmgt.collection.api.CollectionSet;
+import org.opennms.netmgt.collection.api.ServiceParameters;
 import org.opennms.netmgt.dao.api.ResourceStorageDao;
 import org.opennms.netmgt.rrd.RrdRepository;
 import org.slf4j.Logger;
@@ -46,11 +47,15 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
 
     protected final RrdRepository rrdRepository;
 
-    public ThresholdingSessionImpl(ThresholdingServiceImpl service, ThresholdingSessionKey sessionKey, ResourceStorageDao resourceStorageDao, RrdRepository rrdRepository) {
+    private ServiceParameters serviceParameters;
+
+    public ThresholdingSessionImpl(ThresholdingServiceImpl service, ThresholdingSessionKey sessionKey, ResourceStorageDao resourceStorageDao, RrdRepository rrdRepository,
+            ServiceParameters serviceParams) {
         this.service = service;
         this.sessionKey = sessionKey;
         this.resourceStorageDao = resourceStorageDao;
         this.rrdRepository = rrdRepository;
+        this.serviceParameters = serviceParams;
     }
 
     @Override
@@ -73,6 +78,10 @@ public class ThresholdingSessionImpl implements ThresholdingSession {
 
     public RrdRepository getRrdRepository() {
         return rrdRepository;
+    }
+
+    public ServiceParameters getServiceParameters() {
+        return serviceParameters;
     }
 
     private void acceptCollection(CollectionSet collectionSet) throws ThresholdInitializationException {

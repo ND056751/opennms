@@ -53,7 +53,6 @@ import java.util.Map;
 
 import org.easymock.EasyMock;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opennms.core.collection.test.MockCollectionAgent;
@@ -598,11 +597,11 @@ public class ThresholdingVisitorIT {
         List<ThresholdingVisitor> visitors = new ArrayList<>();
         for (int i=1; i<=5; i++) {
             String ipAddress = baseIpAddress + i;
-            ThresholdingVisitor visitor = ThresholdingVisitorImpl.create(i, ipAddress, "SNMP", getRepository(), svcParams, m_resourceStorageDao, null);
+            ThresholdingVisitor visitor = createVisitor(i, ipAddress, "SNMP", svcParams);
             assertNotNull(visitor);
             visitors.add(visitor);
             if (i == 5) {
-                ThresholdingVisitor httpVisitor = ThresholdingVisitorImpl.create(i, ipAddress, "HTTP", getRepository(), svcParams, m_resourceStorageDao, null);
+                ThresholdingVisitor httpVisitor = createVisitor(i, ipAddress, "HTTP", svcParams);
                 assertNotNull(httpVisitor);
                 visitors.add(httpVisitor);
             }
@@ -1194,7 +1193,7 @@ public class ThresholdingVisitorIT {
         for (int i=1; i<=numOfNodes; i++) {
             System.err.println("----------------------------------------------------------------------------------- visitor #" + i);
             String ipAddress = baseIpAddress + i;
-            ThresholdingVisitor visitor = ThresholdingVisitorImpl.create(1, ipAddress, "SNMP", getRepository(), svcParams, m_resourceStorageDao, null);
+            ThresholdingVisitor visitor = createVisitor(1, ipAddress, "SNMP", svcParams);
             assertNotNull(visitor);
             assertEquals(4, ((ThresholdingVisitorImpl) visitor).getThresholdGroups().size()); // mib2, cisco, ciscoIPRA, ciscoNAS
         }
@@ -1276,7 +1275,8 @@ public class ThresholdingVisitorIT {
         Map<String,Object> params = new HashMap<String,Object>();
         params.put("thresholding-enabled", "true");
         params.put("storeByIfAlias", "true");
-        ThresholdingVisitor visitor = createVisitor(params);
+        ServiceParameters svcParams = new ServiceParameters(params);
+        ThresholdingVisitor visitor = createVisitor(svcParams);
 
         SnmpIfData ifData = createSnmpIfData("127.0.0.1", ifName, ifSpeed, ifIndex, true);
         SnmpCollectionAgent agent = createCollectionAgent();
@@ -1637,15 +1637,19 @@ public class ThresholdingVisitorIT {
     private ThresholdingVisitor createVisitor() throws ThresholdInitializationException {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("thresholding-enabled", "true");
-        return createVisitor(params);
+        ServiceParameters svcParams = new ServiceParameters(params);
+        return createVisitor(svcParams);
     }
 
-    private ThresholdingVisitor createVisitor(Map<String, Object> params) throws ThresholdInitializationException {
-        ServiceParameters svcParams = new ServiceParameters(params);
+    private ThresholdingVisitor createVisitor(ServiceParameters params) throws ThresholdInitializationException {
+        return createVisitor(1, "127.0.0.1", "SNMP", params);
+    }
+
+    private ThresholdingVisitor createVisitor(int node, String location, String serviceName, ServiceParameters svcParams) throws ThresholdInitializationException {
         ThresholdingEventProxyImpl eventProxy = new ThresholdingEventProxyImpl();
         eventProxy.setEventMgr(eventMgr);
-        ThresholdingVisitorImpl visitor = (ThresholdingVisitorImpl) ThresholdingVisitorImpl.create(1, "127.0.0.1", "SNMP", getRepository(), svcParams, m_resourceStorageDao,
-                                                                                                   eventProxy);
+        ThresholdingSet thresholdingSet = new ThresholdingSetImpl(node, location, serviceName, getRepository(), svcParams, m_resourceStorageDao, eventProxy);
+        ThresholdingVisitor visitor = new ThresholdingVisitorImpl(thresholdingSet, m_resourceStorageDao, eventProxy);
         assertNotNull(visitor);
         return visitor;
     }

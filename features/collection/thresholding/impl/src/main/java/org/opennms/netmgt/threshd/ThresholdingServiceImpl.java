@@ -121,7 +121,7 @@ public class ThresholdingServiceImpl implements ThresholdingService, EventListen
     public ThresholdingSession createSession(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters serviceParams)
             throws ThresholdInitializationException {
         ThresholdingSessionKey sessionKey = new ThresholdingSessionKey(nodeId, hostAddress, serviceName, serviceName, serviceName);
-        return new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository);
+        return new ThresholdingSessionImpl(this, sessionKey, resourceStorageDao, repository, serviceParams);
     }
 
     public ThresholdingVisitorImpl getThresholdingVistor(ThresholdingSession session) throws ThresholdInitializationException {

@@ -45,8 +45,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
+import org.opennms.netmgt.collectd.AliasedResource;
 import org.opennms.netmgt.collection.api.CollectionAttribute;
 import org.opennms.netmgt.collection.api.CollectionResource;
+import org.opennms.netmgt.collection.api.ServiceParameters;
 import org.opennms.netmgt.config.PollOutagesConfigFactory;
 import org.opennms.netmgt.config.ThreshdConfigFactory;
 import org.opennms.netmgt.config.ThreshdConfigManager;
@@ -84,6 +86,8 @@ public class ThresholdingSetImpl implements ThresholdingSet {
 
     private boolean m_initialized = false;
     private boolean m_hasThresholds = false;
+    private boolean m_counterReset = false;
+    private ServiceParameters m_svcParams;
 
     protected final List<ThresholdGroup> m_thresholdGroups = new LinkedList<>();
     protected final List<String> m_scheduledOutages = new ArrayList<>();
@@ -107,15 +111,16 @@ public class ThresholdingSetImpl implements ThresholdingSet {
      *            a long.
      * @throws ThresholdInitializationException
      */
-    public ThresholdingSetImpl(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ResourceStorageDao resourceStorageDao,
+    public ThresholdingSetImpl(int nodeId, String hostAddress, String serviceName, RrdRepository repository, ServiceParameters svcParams, ResourceStorageDao resourceStorageDao,
             ThresholdingEventProxy eventProxy)
             throws ThresholdInitializationException {
         m_nodeId = nodeId;
         m_hostAddress = (hostAddress == null ? null : hostAddress.intern());
         m_serviceName = (serviceName == null ? null : serviceName.intern());
         m_repository = repository;
-        m_eventProxy = eventProxy;
+        m_svcParams = svcParams;
         m_resourceStorageDao = resourceStorageDao;
+        m_eventProxy = eventProxy;
         initThresholdsDao();
         initialize();
         if (!m_initialized) {
@@ -570,26 +575,46 @@ public class ThresholdingSetImpl implements ThresholdingSet {
 
     @Override
     public void setCounterReset(boolean counterReset) {
-        // TODO Auto-generated method stub
-
+        this.m_counterReset = counterReset;
     }
 
     @Override
     public boolean hasThresholds(CollectionAttribute attribute) {
-        if (attribute == null || attribute.getResource() == null) {
+        CollectionResource resource = attribute.getResource();
+        if (attribute == null || resource == null) {
             return false;
         }
-        return hasThresholds(attribute.getResource().getResourceTypeName(), attribute.getName());
+        if (!isCollectionEnabled(resource))
+            return false;
+        if (resource instanceof AliasedResource && !storeByIfAlias())
+            return false;
+        return hasThresholds(resource.getResourceTypeName(), attribute.getName());
     }
 
     @Override
     public List<Event> applyThresholds(CollectionResource resource, Map<String, CollectionAttribute> attributesMap, Date collectionTimestamp) {
-        CollectionResourceWrapper resourceWrapper = new CollectionResourceWrapper(new Date(), m_nodeId, m_hostAddress, m_serviceName, m_repository, resource, attributesMap,
+        if (!isCollectionEnabled(resource)) {
+            LOG.debug("applyThresholds: Ignoring resource {} because data collection is disabled for this resource.", resource);
+            return new LinkedList<>();
+        }
+        CollectionResourceWrapper resourceWrapper = new CollectionResourceWrapper(collectionTimestamp, m_nodeId, m_hostAddress, m_serviceName, m_repository, resource,
+                                                                                  attributesMap,
                                                                                   m_resourceStorageDao);
+        resourceWrapper.setCounterReset(m_counterReset);
         return Collections.unmodifiableList(applyThresholds(resourceWrapper, attributesMap));
     }
 
     public List<ThresholdGroup> getThresholdGroups() {
         return m_thresholdGroups;
     }
+
+    private boolean isCollectionEnabled(CollectionResource resource) {
+        return resource.shouldPersist(m_svcParams);
+    }
+
+    private boolean storeByIfAlias() {
+        String storeByIfAliasString = m_svcParams.getStoreByIfAlias();
+        return storeByIfAliasString != null && "true".equalsIgnoreCase(storeByIfAliasString);
+    }
+
 }

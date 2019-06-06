@@ -85,40 +85,6 @@ public class ThresholdingVisitorImpl extends AbstractCollectionSetVisitor implem
     private ThresholdingEventProxy m_thresholdingEventProxy;
 
     /**
-     * Static method create must be used to create new ThresholdingVisitor instance. Is static because successful creation depends on thresholding-enabled parameter.
-     *
-     * @param nodeId
-     *            a int.
-     * @param hostAddress
-     *            a {@link java.lang.String} object.
-     * @param serviceName
-     *            a {@link java.lang.String} object.
-     * @param repo
-     *            a {@link org.opennms.netmgt.rrd.RrdRepository} object.
-     * @param svcParams
-     *            a {@link org.opennms.netmgt.collection.api.ServiceParameters} object.
-     * @param eventProxy
-     * @return a {@link org.opennms.netmgt.threshd.ThresholdingVisitor} object.
-     * @throws ThresholdInitializationException
-     */
-    public static ThresholdingVisitor create(int nodeId, String hostAddress, String serviceName, RrdRepository repo, ServiceParameters svcParams,
-            ResourceStorageDao resourceStorageDao, ThresholdingEventProxy eventProxy) throws ThresholdInitializationException {
-
-        String enabled = ParameterMap.getKeyedString(svcParams.getParameters(), "thresholding-enabled", null);
-        if (enabled != null && !"true".equals(enabled)) {
-            LOG.info("create: Thresholds processing is not enabled. Check thresholding-enabled param on collectd package");
-            return null;
-        }
-
-        CollectorThresholdingSet thresholdingSet = new CollectorThresholdingSet(nodeId, hostAddress, serviceName, repo, svcParams, resourceStorageDao, eventProxy);
-        if (!thresholdingSet.hasThresholds()) {
-            LOG.warn("create: the ipaddress/service {}/{} on node {} has no configured thresholds.", hostAddress, serviceName, nodeId);
-        }
-
-        return new ThresholdingVisitorImpl(thresholdingSet, resourceStorageDao, eventProxy);
-    }
-
-    /**
      * <p>
      * Constructor for ThresholdingVisitor.
      * </p>

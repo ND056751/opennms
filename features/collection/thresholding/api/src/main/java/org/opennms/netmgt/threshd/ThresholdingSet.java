@@ -55,6 +55,10 @@ public interface ThresholdingSet {
 
     boolean hasThresholds(CollectionAttribute attribute);
 
+    /*
+    * Apply thresholds definitions for specified resource using attribuesMap as current values.
+    * Return a list of events to be send if some thresholds must be triggered or be rearmed.
+    */
     List<Event> applyThresholds(CollectionResource resource, Map<String, CollectionAttribute> m_attributesMap, Date m_collectionTimestamp);
 
 }

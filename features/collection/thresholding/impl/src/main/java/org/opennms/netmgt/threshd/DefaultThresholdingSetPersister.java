@@ -51,7 +51,7 @@ public class DefaultThresholdingSetPersister implements ThresholdingSetPersister
         ThresholdingSet tSet = thresholdingSets.get(key);
         if (tSet == null) {
             tSet = new ThresholdingSetImpl(key.getNodeId(), key.getLocation(), key.getServiceName(), ((ThresholdingSessionImpl) session).getRrdRepository(),
-                                           ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
+                                           ((ThresholdingSessionImpl) session).getServiceParameters(), ((ThresholdingSessionImpl) session).getResourceDao(), eventProxy);
             thresholdingSets.put(key, tSet);
         }
         return tSet;
